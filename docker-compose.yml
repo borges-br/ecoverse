@@ -1,5 +1,5 @@
+# EcoVerse: own database, Redis and uploads; preserve all VestGO volumes.
 name: ecoverse-local
-
 services:
   ecoverse-web:
     build:
@@ -17,19 +17,22 @@ services:
       AUTH_SECRET: ${AUTH_SECRET:-ecoverse-local-secret-change-me}
       AUTH_TRUST_HOST: ${AUTH_TRUST_HOST:-true}
     ports:
-      - "3000:3000"
+      - '3000:3000'
     depends_on:
       ecoverse-api:
         condition: service_healthy
     healthcheck:
-      test: ["CMD", "wget", "-qO-", "http://127.0.0.1:3000/"]
+      test:
+        - CMD
+        - wget
+        - '-qO-'
+        - http://127.0.0.1:3000/
       interval: 10s
       timeout: 5s
       retries: 5
       start_period: 20s
     networks:
       - ecoverse_internal
-
   ecoverse-api:
     build:
       context: ./api
@@ -41,11 +44,6 @@ services:
       PORT: ${PORT:-3001}
       DATABASE_URL: ${DATABASE_URL:-postgresql://${POSTGRES_USER:-ecoverse}:${POSTGRES_PASSWORD:-ecoverse}@ecoverse-db:5432/${POSTGRES_DB:-ecoverse}}
       REDIS_URL: ${REDIS_URL:-redis://:${REDIS_PASSWORD:-ecoverse_redis_password}@ecoverse-redis:6379}
-      MINIO_ENDPOINT: ${MINIO_ENDPOINT:-ecoverse-storage}
-      MINIO_PORT: ${MINIO_PORT:-9000}
-      MINIO_ACCESS_KEY: ${MINIO_ACCESS_KEY:-ecoverse_minio}
-      MINIO_SECRET_KEY: ${MINIO_SECRET_KEY:-ecoverse_minio_secret}
-      MINIO_BUCKET: ${MINIO_BUCKET:-ecoverse-uploads}
       JWT_SECRET: ${JWT_SECRET:-ecoverse-jwt-secret}
       JWT_REFRESH_SECRET: ${JWT_REFRESH_SECRET:-ecoverse-refresh-secret}
       JWT_EXPIRES_IN: ${JWT_EXPIRES_IN:-15m}
@@ -75,24 +73,28 @@ services:
       MAPBOX_SECRET_TOKEN: ${MAPBOX_SECRET_TOKEN:-}
       CORS_ORIGIN: ${CORS_ORIGIN:-http://localhost:3000}
       TRUST_PROXY: ${TRUST_PROXY:-false}
+      UPLOADS_DIR: /app/uploads
     ports:
-      - "3001:3001"
+      - '3001:3001'
     depends_on:
       ecoverse-db:
         condition: service_healthy
       ecoverse-redis:
         condition: service_healthy
-      ecoverse-storage:
-        condition: service_healthy
     healthcheck:
-      test: ["CMD", "wget", "-qO-", "http://127.0.0.1:3001/health/ready"]
+      test:
+        - CMD
+        - wget
+        - '-qO-'
+        - http://127.0.0.1:3001/health/ready
       interval: 10s
       timeout: 5s
       retries: 5
       start_period: 20s
     networks:
       - ecoverse_internal
-
+    volumes:
+      - ecoverse_uploads_data:/app/uploads
   ecoverse-db:
     image: postgis/postgis:16-3.4-alpine
     restart: unless-stopped
@@ -105,63 +107,40 @@ services:
       - ecoverse_db_data:/var/lib/postgresql/data
       - ./infra/postgres/init.sql:/docker-entrypoint-initdb.d/01-init.sql:ro
     ports:
-      - "5433:5432"
+      - '5433:5432'
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-ecoverse} -d ${POSTGRES_DB:-ecoverse}"]
+      test:
+        - CMD-SHELL
+        - pg_isready -U ${POSTGRES_USER:-ecoverse} -d ${POSTGRES_DB:-ecoverse}
       interval: 5s
       timeout: 5s
       retries: 5
       start_period: 10s
     networks:
       - ecoverse_internal
-
   ecoverse-redis:
     image: redis:7-alpine
     restart: unless-stopped
-    command: >
-      redis-server
-      --requirepass ${REDIS_PASSWORD:-ecoverse_redis_password}
-      --maxmemory 256mb
-      --maxmemory-policy allkeys-lru
-      --save 60 1000
+    command: |
+      redis-server --requirepass ${REDIS_PASSWORD:-ecoverse_redis_password} --maxmemory 256mb --maxmemory-policy allkeys-lru --save 60 1000
     volumes:
       - ecoverse_redis_data:/data
     healthcheck:
-      test: ["CMD", "redis-cli", "-a", "${REDIS_PASSWORD:-ecoverse_redis_password}", "ping"]
+      test:
+        - CMD
+        - redis-cli
+        - '-a'
+        - ${REDIS_PASSWORD:-ecoverse_redis_password}
+        - ping
       interval: 5s
       timeout: 5s
       retries: 5
     networks:
       - ecoverse_internal
-
-  ecoverse-storage:
-    image: chrislusf/seaweedfs:4.48@sha256:4e61d15fd35994cb1e43e1e553dff106794841fd9a99ade2fc8c8bfce4d7872d
-    restart: unless-stopped
-    command: ["mini", "-dir=/data", "-s3.port=9000", "-ip=ecoverse-storage", "-admin.ui=false"]
-    environment:
-      AWS_ACCESS_KEY_ID: ${MINIO_ACCESS_KEY:-ecoverse_storage}
-      AWS_SECRET_ACCESS_KEY: ${MINIO_SECRET_KEY:-ecoverse_storage_secret}
-      S3_BUCKET: ${MINIO_BUCKET:-ecoverse-uploads}
-    volumes:
-      - ecoverse_storage_data:/data
-    ports:
-      - "9000:9000"
-    healthcheck:
-      test: ["CMD", "wget", "-qO-", "http://127.0.0.1:9333/cluster/status"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-      start_period: 20s
-    networks:
-      ecoverse_internal:
-        aliases:
-          - ecoverse-storage
-
 volumes:
-  ecoverse_db_data:
-  ecoverse_redis_data:
-  ecoverse_storage_data:
-
+  ecoverse_db_data: null
+  ecoverse_redis_data: null
+  ecoverse_uploads_data: null
 networks:
   ecoverse_internal:
     driver: bridge

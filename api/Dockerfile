@@ -19,6 +19,7 @@ COPY . .
 
 RUN npx prisma generate
 RUN npm run build
+RUN mkdir -p /app/uploads && chown node:node /app/uploads
 
 
 FROM node:24-alpine AS runner
@@ -36,6 +37,7 @@ COPY --from=builder /app/prisma ./prisma
 COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
 COPY --from=builder /app/node_modules/@prisma ./node_modules/@prisma
 COPY --from=builder /app/node_modules/prisma ./node_modules/prisma
+RUN mkdir -p /app/uploads && chown node:node /app/uploads
 
 USER node
 

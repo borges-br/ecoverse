@@ -86,7 +86,7 @@ O trabalho inclui a experiência pública e a parte que mantém a rede funcionan
 | Experiência web | Serviços e dados | Publicação |
 | --- | --- | --- |
 | Next.js 16 · React 19 · TypeScript | Fastify 5 · Prisma · PostgreSQL/PostGIS | Docker · GitHub Actions · GHCR |
-| Tailwind CSS 4 · Manrope · DM Sans | Redis · S3 / SeaweedFS · Auth.js | Portainer · Nginx Proxy Manager |
+| Tailwind CSS 4 · Manrope · DM Sans | Redis · Uploads em volume persistente · Auth.js | Portainer · Nginx Proxy Manager |
 
 <details>
 <summary><strong>Como o código está organizado</strong></summary>
@@ -151,13 +151,13 @@ npm run type-check
 npm test
 ```
 
-Os testes de domínio verificam categorias, quantidades, compatibilidade dos pontos e manutenção do histórico. O teste de publicação também verifica migrações, login e armazenamento em ambiente isolado. Consulte o [registro de validação](docs/ecoverse/publicacao-validacao.md) para os resultados efetivamente executados.
+Os testes verificam categorias, quantidades, compatibilidade dos pontos, histórico e armazenamento de imagens. O teste de publicação também verifica migrações, login e persistência em ambiente isolado. Consulte o [registro de validação](docs/ecoverse/publicacao-validacao.md) para os resultados efetivamente executados.
 
 </details>
 
 ## Do repositório ao Portainer
 
-O GitHub Actions verifica o código e publica duas imagens: **ecoverse-web** e **ecoverse-api**. O Compose de produção conecta a aplicação a banco, Redis e armazenamento próprios. Somente o serviço web entra na rede do proxy.
+O GitHub Actions verifica o código e publica duas imagens: **ecoverse-web** e **ecoverse-api**. O Compose de produção cria quatro serviços e três volumes próprios: banco, Redis e imagens enviadas à aplicação. Somente o serviço web entra na rede do proxy.
 
 **Destino definido para a publicação: `mosfet.com.br`.** O domínio será direcionado ao EcoVerse na troca da aplicação; a nova stack não reutiliza o banco do VestGO.
 

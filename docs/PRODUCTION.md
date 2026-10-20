@@ -9,10 +9,9 @@ Este guia descreve a configuração. O [registro de validação](ecoverse/public
 | Serviço | Função | Acesso |
 | --- | --- | --- |
 | `ecoverse-web` | Next.js / Auth.js | Proxy → HTTP `ecoverse-web:3000` |
-| `ecoverse-api` | Fastify / Prisma | Rede própria, porta 3001 |
+| `ecoverse-api` | Fastify / Prisma / uploads persistentes | Rede própria, porta 3001 |
 | `ecoverse-db` | PostgreSQL 16 / PostGIS | Rede própria, porta 5432 |
 | `ecoverse-redis` | Sessões auxiliares, limites e 2FA | Rede própria, porta 6379 |
-| `ecoverse-storage` | SeaweedFS com API S3 para imagens | Rede própria, porta 9000 |
 
 O [Compose de produção](../docker-compose.prod.yml) não publica portas no host nem depende de pastas montadas do servidor. Somente o serviço web participa da rede externa `rvproxy_npm_backend_network`.
 
@@ -21,8 +20,7 @@ O [Compose de produção](../docker-compose.prod.yml) não publica portas no hos
 | Banco e usuário PostgreSQL | `ecoverse` |
 | Volume do banco | `ecoverse_db_data` |
 | Volume Redis | `ecoverse_redis_data` |
-| Volume de imagens S3 | `ecoverse_storage_data` |
-| Bucket de imagens | `ecoverse-uploads` |
+| Volume de imagens | `ecoverse_uploads_data`, montado em `/app/uploads` na API |
 
 A conexão PostgreSQL é montada no Compose com o host `ecoverse-db`. Não importe `DATABASE_URL`, segredos ou nomes de volumes do VestGO. O SMTP pode ser o mesmo; o banco e as chaves de autenticação devem ser exclusivos.
 
@@ -61,11 +59,11 @@ Preencha no arquivo:
 | `ECOVERSE_ADMIN_EMAIL` | E-mail do primeiro administrador |
 | `ECOVERSE_ADMIN_PASSWORD` | Senha gerada, mantida em local privado |
 
-O remetente, usuário, senha e servidor SMTP devem ser preenchidos para `ECOVERSE_EMAIL_ENABLED=true`. Com e-mail desativado, confirmação de conta e recuperação por e-mail ficam indisponíveis. A configuração privada desta publicação pode reaproveitar o SMTP já usado pelo VestGO, conforme autorizado pelo responsável. A senha de armazenamento fica em `ECOVERSE_STORAGE_PASSWORD`.
+O remetente, usuário, senha e servidor SMTP devem ser preenchidos para `ECOVERSE_EMAIL_ENABLED=true`. Com e-mail desativado, confirmação de conta e recuperação por e-mail ficam indisponíveis. A configuração privada desta publicação pode reaproveitar o SMTP já usado pelo VestGO, conforme autorizado pelo responsável.
 
-Não troque as senhas de banco, Redis ou armazenamento em uma atualização comum: alterar apenas a variável não altera necessariamente a credencial já persistida no volume. Preserve o arquivo utilizado na primeira implantação.
+Não troque as senhas de banco ou Redis em uma atualização comum: alterar apenas a variável não altera necessariamente a credencial já persistida no volume. Preserve o arquivo utilizado na primeira implantação.
 
-O armazenamento usa a imagem oficial `chrislusf/seaweedfs:4.48`, fixada também por digest SHA-256. As credenciais S3 são obrigatórias e a interface administrativa fica desativada. O volume novo não aceita arquivos de dados internos do MinIO; não aponte o SeaweedFS para um volume antigo.
+As imagens são gravadas pela API no volume exclusivo `ecoverse_uploads_data`. O processo roda como usuário `node`; arquivos têm nomes gerados pelo serviço e acesso por `/api/backend/uploads/...`. O volume novo não recebe os arquivos internos do MinIO antigo. Faça backup do banco e desse volume de imagens em conjunto. Esta configuração atende uma API em uma única VPS; para múltiplos hosts, é necessário armazenamento compartilhado antes de escalar.
 
 Geocodificação usa Nominatim por padrão. Mapbox é opcional. As chaves não estão incluídas no repositório.
 
@@ -78,13 +76,13 @@ No Portainer, selecione **Borges VPS → Stacks → Add stack**.
 3. Outra opção é **Web editor**, colando o conteúdo integral do Compose de produção.
 4. Em **Environment variables**, importe `.env.portainer`. Esse conteúdo é privado e deve ficar restrito aos administradores do ambiente.
 5. Confira a tag das duas imagens e a rede externa existente. Mantenha o acesso à stack restrito aos administradores.
-6. Inicie a implantação e acompanhe os cinco serviços. A API executa `prisma migrate deploy` antes de iniciar, com o Prisma já instalado na imagem.
+6. Inicie a implantação e acompanhe os quatro serviços. A API executa `prisma migrate deploy` antes de iniciar, com o Prisma já instalado na imagem.
 
 Uma falha de pull deve ser corrigida no registro/tag. Não substitua as imagens por `vestgo-*`. Uma falha por rede ausente exige conferir o nome da rede compartilhada do proxy, sem criar uma rede desconectada dele.
 
 ## 4. Validar antes de mudar o domínio
 
-A web só fica saudável depois da API. A API verifica banco, Redis e uma conexão real com o bucket S3 em `/health/ready`; `/health` indica apenas que o processo respondeu.
+A web só fica saudável depois da API. A API verifica banco, Redis e as permissões de leitura/gravação do volume de imagens em `/health/ready`; `/health` indica apenas que o processo respondeu.
 
 No console do container `ecoverse-web`, é possível verificar a API internamente:
 
@@ -139,5 +137,4 @@ Para voltar uma versão do EcoVerse, use a tag anterior das duas imagens. Uma re
 - [Portainer: criar stacks](https://docs.portainer.io/user/docker/stacks/add)
 - [Docker Compose: nomes de projeto](https://docs.docker.com/compose/how-tos/project-name/)
 - [GitHub Actions: publicar imagens Docker](https://docs.github.com/en/actions/tutorials/publish-packages/publish-docker-images)
-- [SeaweedFS: configuração de um servidor S3 independente](https://github.com/seaweedfs/seaweedfs/wiki/Quick-Start-with-weed-mini)
 - [Guia anterior do VestGO, preservado como histórico](legacy/vestgo-PRODUCTION.md)

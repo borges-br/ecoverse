@@ -6,7 +6,7 @@ import path from 'node:path';
 const root = fileURLToPath(new URL('../../', import.meta.url));
 const destination = path.join(root, '.env.portainer');
 let content = await readFile(path.join(root, '.env.portainer.example'), 'utf8');
-for (const name of ['POSTGRES_PASSWORD', 'REDIS_PASSWORD', 'STORAGE_PASSWORD', 'AUTH_SECRET', 'JWT_SECRET', 'JWT_REFRESH_SECRET', '2FA_KEY', 'ADMIN_PASSWORD']) {
+for (const name of ['POSTGRES_PASSWORD', 'REDIS_PASSWORD', 'AUTH_SECRET', 'JWT_SECRET', 'JWT_REFRESH_SECRET', '2FA_KEY', 'ADMIN_PASSWORD']) {
   content = content.replace(new RegExp(`^ECOVERSE_${name}=.*$`, 'm'), `ECOVERSE_${name}=${randomBytes(32).toString('hex')}`);
 }
 try {

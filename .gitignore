@@ -29,3 +29,5 @@ Thumbs.db
 /hero/
 /web/public/atividades/
 /tools/deploy/*.private.*
+/api/uploads/
+/uploads/

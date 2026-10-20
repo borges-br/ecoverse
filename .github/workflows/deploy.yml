@@ -49,7 +49,7 @@ jobs:
       - run: npm run build
       - name: Domain tests
         if: matrix.app == 'api'
-        run: node --test tests/disposal.test.cjs
+        run: node --test tests/*.test.cjs
 
   publish:
     needs: [quality, stack]
