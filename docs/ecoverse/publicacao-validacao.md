@@ -9,7 +9,7 @@
 | Testes integrados | 18 verificações aprovadas no ambiente isolado com volume de uploads |
 | Homepage após a atualização | 22 verificações aprovadas em navegador, incluindo 11 dimensões de tela |
 | Isolamento do Compose de produção | Verificado por `tools/deploy/check-stack.mjs` |
-| GitHub / GHCR | Repositório público criado; web/API publicadas e pipeline aprovado no commit `7924b0023ad516e152bf78d5ebc9e18f7fd80513`; ajustes finais do Compose são acompanhados no histórico do Actions |
+| GitHub / GHCR | Repositório público criado; web/API finais publicadas e pipeline aprovado no commit `3393a539d67ed7c89dc95fcca5f1766748bdb3a9` ([execução](https://github.com/borges-br/ecoverse/actions/runs/39505448086)) |
 | Portainer e troca do domínio | Exigem implantação e validação no servidor; os resultados locais não comprovam produção |
 
 ## Dependências
@@ -46,7 +46,7 @@ Foi criada a stack de teste `ecoverse-release-test`, com banco, Redis e volumes 
 Foram executados:
 
 - Build de produção de web e API em Docker; lint e verificação de tipos nas duas aplicações.
-- Os testes de domínio e os três testes de armazenamento em `api/tests/`; o ensaio Linux inclui recusa de links simbólicos.
+- Os oito testes de domínio e armazenamento em `api/tests/`, aprovados no CI Linux; o ensaio inclui recusa de links simbólicos. No Windows, apenas esse caso é pulado por não pressupor privilégio local para criar symlinks; ele foi executado também dentro da imagem Linux.
 - Aplicação das 20 migrações Prisma em banco independente e novo início idempotente.
 - Login real da API e sessão Auth.js para participante, ponto de coleta, operador e administrador.
 - Renderização das páginas protegidas, incluindo filtros de operações e detalhe do registro com parâmetros assíncronos.
