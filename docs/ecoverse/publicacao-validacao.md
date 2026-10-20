@@ -6,10 +6,10 @@
 | --- | --- |
 | Atualização de segurança e compatibilidade | Concluída e validada localmente |
 | Build das imagens web e API | Aprovado em Docker / Node.js 24 |
-| Testes integrados | 16 verificações aprovadas no ambiente isolado |
+| Testes integrados | 18 verificações aprovadas no ambiente isolado com SeaweedFS |
 | Homepage após a atualização | 22 verificações aprovadas em navegador, incluindo 11 dimensões de tela |
 | Isolamento do Compose de produção | Verificado por `tools/deploy/check-stack.mjs` |
-| GitHub / GHCR | Publicação acompanhada no histórico do GitHub Actions |
+| GitHub / GHCR | Repositório público criado; web/API publicadas e pipeline aprovado no commit `7924b0023ad516e152bf78d5ebc9e18f7fd80513`; ajustes finais do Compose são acompanhados no histórico do Actions |
 | Portainer e troca do domínio | Exigem implantação e validação no servidor; os resultados locais não comprovam produção |
 
 ## Dependências
@@ -35,7 +35,9 @@ As adaptações incluem parâmetros assíncronos de rotas, `proxy.ts` para a pro
 
 Os quatro avisos moderados da API estão na árvore do SDK MinIO (`minio`, `query-string`, `decode-uri-component`, `stream-json`). A auditoria sugere uma regressão para um SDK antigo como correção automática; ela não foi aplicada porque desfaz a atualização e reintroduz problemas anteriores. Não foram forçadas versões principais de dependências transitivas sem validação de compatibilidade. Esses avisos continuam abertos e precisam ser reavaliados nas próximas versões do SDK. A leitura de objetos usa um endpoint de armazenamento configurado pelo administrador e chaves de arquivo validadas; isso não equivale a eliminar os avisos.
 
-O servidor MinIO está fixado em uma release, separadamente do SDK npm. A auditoria npm não avalia o servidor, PostgreSQL, Redis ou os pacotes Alpine. A manutenção futura do armazenamento deve considerar o estado do projeto upstream.
+Na conferência das imagens, o servidor MinIO antigo não pôde ser baixado do registro original. Além disso, os avisos oficiais [GHSA-hv4r-mvr4-25vw](https://github.com/minio/minio/security/advisories/GHSA-hv4r-mvr4-25vw) e [GHSA-9c4q-hq6p-c237](https://github.com/minio/minio/security/advisories/GHSA-9c4q-hq6p-c237) afetam as releases finais da edição comunitária, sem correção nessa linha. Por isso a nova stack usa **SeaweedFS 4.48**, em imagem oficial fixada por digest, com um volume novo e protocolo S3. Nenhum volume MinIO anterior é convertido ou reutilizado. O SDK cliente é uma dependência separada e mantém os quatro avisos moderados descritos acima.
+
+A auditoria npm não avalia os servidores de armazenamento, PostgreSQL, Redis ou os pacotes do sistema operacional. Não foi executada uma auditoria completa de vulnerabilidades de todas as imagens.
 
 ## Ambiente local de publicação
 
@@ -50,8 +52,9 @@ Foram executados:
 - Renderização das páginas protegidas, incluindo filtros de operações e detalhe do registro com parâmetros assíncronos.
 - Busca por material e parceria ativa, registro de 1,25 L, rejeição de quantidade fracionária em materiais contáveis e consulta por código QR.
 - Recusa de confirmação pelo participante e confirmação autorizada pelo ponto.
-- Upload real de PNG para MinIO e recuperação pela rota pública da aplicação, comparando todos os bytes.
-- `/health/ready` com banco, Redis e armazenamento; interrupção apenas do MinIO de teste produziu 503 e a retomada restaurou 200.
+- Upload real de PNG para SeaweedFS/S3 e recuperação pela rota pública da aplicação, comparando todos os bytes; a imagem persistiu com bytes idênticos após o reinício do armazenamento.
+- Acesso S3 sem assinatura e com segredo incorreto foi recusado.
+- `/health/ready` com banco, Redis e armazenamento; interrupção apenas do armazenamento de teste produziu 503 e a retomada restaurou 200.
 - Usuário `node` nos containers web/API e verificação dos volumes montados no ambiente de teste.
 - Páginas públicas, proteção anônima, posters e requisição parcial do vídeo com HTTP 206.
 
@@ -69,7 +72,7 @@ Os screenshots do README apresentam a aplicação, sem montagem de telas ou mét
 
 O ambiente Borges VPS foi consultado no Portainer. Os containers anteriores pertencem à stack `mosfet`, com imagens `vestgo-web` e `vestgo-api`. Eles não precisam ser recriados para instalar o EcoVerse. O Compose novo usa cinco serviços `ecoverse-*` e três volumes exclusivos.
 
-O SMTP existente foi disponibilizado para reaproveitamento por autorização do responsável. Suas credenciais e os segredos novos ficam em `.env.portainer`, ignorado pelo Git, e não constam deste documento.
+O SMTP existente foi disponibilizado para reaproveitamento por autorização do responsável. A primeira autenticação foi recusada; após a atualização da senha pelo responsável, a conexão TLS e a autenticação foram aprovadas, sem envio de mensagem. A entrega de e-mail ao destinatário continua pendente de teste na aplicação publicada. As credenciais e os segredos novos ficam em `.env.portainer`, ignorado pelo Git, e não constam deste documento.
 
 A publicação só deve ser considerada verificada depois dos passos do [guia de produção](../PRODUCTION.md), especialmente login no domínio, entrega de e-mail e leitura de uma imagem enviada. O domínio pode continuar servindo VestGO enquanto essa troca não for concluída.
 

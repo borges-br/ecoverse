@@ -12,7 +12,7 @@ Este guia descreve a configuração. O [registro de validação](ecoverse/public
 | `ecoverse-api` | Fastify / Prisma | Rede própria, porta 3001 |
 | `ecoverse-db` | PostgreSQL 16 / PostGIS | Rede própria, porta 5432 |
 | `ecoverse-redis` | Sessões auxiliares, limites e 2FA | Rede própria, porta 6379 |
-| `ecoverse-storage` | MinIO para imagens | Rede própria, porta 9000 |
+| `ecoverse-storage` | SeaweedFS com API S3 para imagens | Rede própria, porta 9000 |
 
 O [Compose de produção](../docker-compose.prod.yml) não publica portas no host nem depende de pastas montadas do servidor. Somente o serviço web participa da rede externa `rvproxy_npm_backend_network`.
 
@@ -21,7 +21,7 @@ O [Compose de produção](../docker-compose.prod.yml) não publica portas no hos
 | Banco e usuário PostgreSQL | `ecoverse` |
 | Volume do banco | `ecoverse_db_data` |
 | Volume Redis | `ecoverse_redis_data` |
-| Volume MinIO | `ecoverse_minio_data` |
+| Volume de imagens S3 | `ecoverse_storage_data` |
 | Bucket de imagens | `ecoverse-uploads` |
 
 A conexão PostgreSQL é montada no Compose com o host `ecoverse-db`. Não importe `DATABASE_URL`, segredos ou nomes de volumes do VestGO. O SMTP pode ser o mesmo; o banco e as chaves de autenticação devem ser exclusivos.
@@ -61,9 +61,11 @@ Preencha no arquivo:
 | `ECOVERSE_ADMIN_EMAIL` | E-mail do primeiro administrador |
 | `ECOVERSE_ADMIN_PASSWORD` | Senha gerada, mantida em local privado |
 
-O remetente, usuário, senha e servidor SMTP devem ser preenchidos para `ECOVERSE_EMAIL_ENABLED=true`. Com e-mail desativado, confirmação de conta e recuperação por e-mail ficam indisponíveis. A configuração privada desta publicação pode reaproveitar o SMTP já usado pelo VestGO, conforme autorizado pelo responsável.
+O remetente, usuário, senha e servidor SMTP devem ser preenchidos para `ECOVERSE_EMAIL_ENABLED=true`. Com e-mail desativado, confirmação de conta e recuperação por e-mail ficam indisponíveis. A configuração privada desta publicação pode reaproveitar o SMTP já usado pelo VestGO, conforme autorizado pelo responsável. A senha de armazenamento fica em `ECOVERSE_STORAGE_PASSWORD`.
 
-Não troque as senhas de banco, Redis ou MinIO em uma atualização comum: alterar apenas a variável não altera a credencial já persistida no volume. Preserve o arquivo utilizado na primeira implantação.
+Não troque as senhas de banco, Redis ou armazenamento em uma atualização comum: alterar apenas a variável não altera necessariamente a credencial já persistida no volume. Preserve o arquivo utilizado na primeira implantação.
+
+O armazenamento usa a imagem oficial `chrislusf/seaweedfs:4.48`, fixada também por digest SHA-256. As credenciais S3 são obrigatórias e a interface administrativa fica desativada. O volume novo não aceita arquivos de dados internos do MinIO; não aponte o SeaweedFS para um volume antigo.
 
 Geocodificação usa Nominatim por padrão. Mapbox é opcional. As chaves não estão incluídas no repositório.
 
@@ -82,7 +84,7 @@ Uma falha de pull deve ser corrigida no registro/tag. Não substitua as imagens 
 
 ## 4. Validar antes de mudar o domínio
 
-A web só fica saudável depois da API. A API verifica banco, Redis e uma conexão real com o bucket do MinIO em `/health/ready`; `/health` indica apenas que o processo respondeu.
+A web só fica saudável depois da API. A API verifica banco, Redis e uma conexão real com o bucket S3 em `/health/ready`; `/health` indica apenas que o processo respondeu.
 
 No console do container `ecoverse-web`, é possível verificar a API internamente:
 
@@ -96,7 +98,7 @@ Antes da troca, mantenha o backup habitual do VestGO e registre o destino atual 
 
 ## 5. Direcionar mosfet.com.br
 
-No Nginx Proxy Manager, edite o Proxy Host existente de `mosfet.com.br` e `www.mosfet.com.br`:
+No [Nginx Proxy Manager](https://npm-b.shop/), edite o Proxy Host existente de `mosfet.com.br` e `www.mosfet.com.br`:
 
 | Campo | Valor novo |
 | --- | --- |
@@ -137,4 +139,5 @@ Para voltar uma versão do EcoVerse, use a tag anterior das duas imagens. Uma re
 - [Portainer: criar stacks](https://docs.portainer.io/user/docker/stacks/add)
 - [Docker Compose: nomes de projeto](https://docs.docker.com/compose/how-tos/project-name/)
 - [GitHub Actions: publicar imagens Docker](https://docs.github.com/en/actions/tutorials/publish-packages/publish-docker-images)
+- [SeaweedFS: configuração de um servidor S3 independente](https://github.com/seaweedfs/seaweedfs/wiki/Quick-Start-with-weed-mini)
 - [Guia anterior do VestGO, preservado como histórico](legacy/vestgo-PRODUCTION.md)

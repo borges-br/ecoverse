@@ -4,7 +4,7 @@
 
 - `web/`: Next.js 16 App Router, React 19, TypeScript, Auth.js, Tailwind 4, React Query e Leaflet.
 - `api/`: Fastify 5, Prisma, autenticação JWT/refresh, autorização por papel e módulos de domínio.
-- PostgreSQL 16/PostGIS, Redis 7 e MinIO continuam como serviços de persistência.
+- PostgreSQL 16/PostGIS, Redis 7 e SeaweedFS/S3 são os serviços de persistência. O SDK cliente e as variáveis `MINIO_*` permanecem compatíveis com o protocolo S3; o servidor MinIO antigo não integra a nova stack.
 - O navegador chama `/api/backend/...`; o servidor Next usa `INTERNAL_API_URL` diretamente.
 
 O Compose de produção cria a stack EcoVerse com banco, credenciais e três volumes exclusivos. Somente a web entra na rede compartilhada do proxy. O pipeline publica imagens próprias no GHCR após as verificações de qualidade. O [guia de publicação](docs/PRODUCTION.md) descreve a troca do domínio; o [registro de validação](docs/ecoverse/publicacao-validacao.md) informa o que foi efetivamente executado. A stack e os volumes anteriores do VestGO são preservados.

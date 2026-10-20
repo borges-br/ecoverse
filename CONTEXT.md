@@ -20,7 +20,7 @@ O tema inicial é claro, independente do sistema. Preferências explícitas de C
 
 ## Infraestrutura e validação
 
-A publicação EcoVerse foi autorizada em um novo repositório público `borges-br/ecoverse`, reutilizando o domínio `mosfet.com.br`. O Compose de produção cria a stack `ecoverse`, cinco serviços próprios e volumes `ecoverse_db_data`, `ecoverse_redis_data`, `ecoverse_minio_data`. Não renomear ou reaproveitar os volumes da stack anterior `mosfet`. A referência do VestGO permanece em `docs/legacy/vestgo-PRODUCTION.md`.
+A publicação EcoVerse foi autorizada em um novo repositório público `borges-br/ecoverse`, reutilizando o domínio `mosfet.com.br`. O Compose de produção cria a stack `ecoverse`, cinco serviços próprios e volumes `ecoverse_db_data`, `ecoverse_redis_data`, `ecoverse_storage_data`. SeaweedFS 4.48 substitui o servidor MinIO antigo, usando S3 e volume novo; o SDK e as variáveis internas `MINIO_*` permanecem por compatibilidade. Não renomear ou reaproveitar os volumes da stack anterior `mosfet`. A referência do VestGO permanece em `docs/legacy/vestgo-PRODUCTION.md`.
 
 A atualização de segurança usa Next.js 16, React 19, Tailwind 4, Fastify 5 e Node.js 24. A proteção de navegação fica em `web/proxy.ts`, e parâmetros de páginas/rotas são assíncronos. O ambiente `ecoverse-release-test` validou migrações, quatro papéis, Auth.js, QR, upload/leitura real no MinIO e readiness com falha de armazenamento. Consulte `docs/ecoverse/publicacao-validacao.md` para os limites e o estado de publicação. Segredos de produção ficam apenas em `.env.portainer` ou no Portainer.
 

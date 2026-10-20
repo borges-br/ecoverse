@@ -86,7 +86,7 @@ O trabalho inclui a experiência pública e a parte que mantém a rede funcionan
 | Experiência web | Serviços e dados | Publicação |
 | --- | --- | --- |
 | Next.js 16 · React 19 · TypeScript | Fastify 5 · Prisma · PostgreSQL/PostGIS | Docker · GitHub Actions · GHCR |
-| Tailwind CSS 4 · Manrope · DM Sans | Redis · MinIO · Auth.js | Portainer · Nginx Proxy Manager |
+| Tailwind CSS 4 · Manrope · DM Sans | Redis · S3 / SeaweedFS · Auth.js | Portainer · Nginx Proxy Manager |
 
 <details>
 <summary><strong>Como o código está organizado</strong></summary>
@@ -116,7 +116,7 @@ cp .env.example .env
 docker compose up --build -d
 ```
 
-Abra **[localhost:3000](http://localhost:3000)**. A configuração local cria sua própria base e não importa contas ou dados de uma publicação anterior. O arquivo `.env.example` contém valores de desenvolvimento; a configuração de produção fica separada.
+Abra **[localhost:3000](http://localhost:3000)**. A configuração local cria sua própria base e não importa contas ou dados de uma publicação anterior. O arquivo `.env.example` contém valores de desenvolvimento; a configuração de produção fica separada. Para testar confirmação de conta e recuperação por e-mail, configure o SMTP e ative `EMAIL_ENABLED` no seu `.env`.
 
 <details>
 <summary><strong>Editar a aplicação com recarregamento automático</strong></summary>

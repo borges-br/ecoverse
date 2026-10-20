@@ -53,7 +53,7 @@ services:
       TWO_FACTOR_ENCRYPTION_KEY: ${TWO_FACTOR_ENCRYPTION_KEY:-}
       APP_PUBLIC_URL: ${APP_PUBLIC_URL:-http://localhost:3000}
       WEB_PUBLIC_URL: ${WEB_PUBLIC_URL:-${APP_PUBLIC_URL:-http://localhost:3000}}
-      EMAIL_ENABLED: ${EMAIL_ENABLED:-true}
+      EMAIL_ENABLED: ${EMAIL_ENABLED:-false}
       SMTP_HOST: ${SMTP_HOST:-}
       SMTP_PORT: ${SMTP_PORT:-587}
       SMTP_SECURE: ${SMTP_SECURE:-false}
@@ -82,7 +82,7 @@ services:
         condition: service_healthy
       ecoverse-redis:
         condition: service_healthy
-      ecoverse-minio:
+      ecoverse-storage:
         condition: service_healthy
     healthcheck:
       test: ["CMD", "wget", "-qO-", "http://127.0.0.1:3001/health/ready"]
@@ -134,21 +134,20 @@ services:
     networks:
       - ecoverse_internal
 
-  ecoverse-minio:
-    image: minio/minio:latest
+  ecoverse-storage:
+    image: chrislusf/seaweedfs:4.48@sha256:4e61d15fd35994cb1e43e1e553dff106794841fd9a99ade2fc8c8bfce4d7872d
     restart: unless-stopped
-    command: server /data --console-address ":9001"
+    command: ["mini", "-dir=/data", "-s3.port=9000", "-ip=ecoverse-storage", "-admin.ui=false"]
     environment:
-      MINIO_ROOT_USER: ${MINIO_ACCESS_KEY:-ecoverse_minio}
-      MINIO_ROOT_PASSWORD: ${MINIO_SECRET_KEY:-ecoverse_minio_secret}
-      MINIO_BROWSER_REDIRECT_URL: ${MINIO_CONSOLE_URL:-http://localhost:9001}
+      AWS_ACCESS_KEY_ID: ${MINIO_ACCESS_KEY:-ecoverse_storage}
+      AWS_SECRET_ACCESS_KEY: ${MINIO_SECRET_KEY:-ecoverse_storage_secret}
+      S3_BUCKET: ${MINIO_BUCKET:-ecoverse-uploads}
     volumes:
-      - ecoverse_minio_data:/data
+      - ecoverse_storage_data:/data
     ports:
       - "9000:9000"
-      - "9001:9001"
     healthcheck:
-      test: ["CMD", "curl", "-fsS", "http://127.0.0.1:9000/minio/health/live"]
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1:9333/cluster/status"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -161,7 +160,7 @@ services:
 volumes:
   ecoverse_db_data:
   ecoverse_redis_data:
-  ecoverse_minio_data:
+  ecoverse_storage_data:
 
 networks:
   ecoverse_internal:
