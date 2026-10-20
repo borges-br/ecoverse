@@ -1,5 +1,8 @@
 <p align="center">
-  <img src="web/public/ecoverse/ecoverse-logo-horizontal-primary.svg" width="250" alt="EcoVerse" />
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="web/public/ecoverse/ecoverse-logo-horizontal-white.svg" />
+    <img src="web/public/ecoverse/ecoverse-logo-horizontal-primary.svg" width="250" alt="EcoVerse" />
+  </picture>
 </p>
 
 <h1 align="center">O fim não é o fim.</h1>
