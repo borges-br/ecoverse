@@ -1,0 +1,169 @@
+# Portainer / Docker Standalone. Create a NEW stack named ecoverse.
+# Own database and volumes; never consumes DATABASE_URL from VestGO.
+name: ecoverse
+
+x-logging: &logging
+  driver: json-file
+  options:
+    max-size: "10m"
+    max-file: "3"
+
+services:
+  ecoverse-web:
+    image: ghcr.io/borges-br/ecoverse-web:${ECOVERSE_IMAGE_TAG:?Defina ECOVERSE_IMAGE_TAG}
+    pull_policy: always
+    restart: unless-stopped
+    logging: *logging
+    environment:
+      NODE_ENV: production
+      PORT: "3000"
+      HOSTNAME: 0.0.0.0
+      INTERNAL_API_URL: http://ecoverse-api:3001
+      NEXTAUTH_URL: ${ECOVERSE_APP_URL:-https://mosfet.com.br}
+      NEXTAUTH_SECRET: ${ECOVERSE_AUTH_SECRET:?Gere um segredo exclusivo do EcoVerse}
+      AUTH_SECRET: ${ECOVERSE_AUTH_SECRET:?Gere um segredo exclusivo do EcoVerse}
+      AUTH_TRUST_HOST: "true"
+      MAPBOX_PUBLIC_TOKEN: ${ECOVERSE_MAPBOX_PUBLIC_TOKEN:-}
+    depends_on:
+      ecoverse-api:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1:3000/"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    networks:
+      ecoverse_internal:
+      ecoverse_proxy:
+        aliases: [ecoverse-web]
+
+  ecoverse-api:
+    image: ghcr.io/borges-br/ecoverse-api:${ECOVERSE_IMAGE_TAG:?Defina ECOVERSE_IMAGE_TAG}
+    pull_policy: always
+    restart: unless-stopped
+    logging: *logging
+    command: ["sh", "-ec", "node node_modules/prisma/build/index.js migrate deploy && exec node dist/server.js"]
+    environment:
+      NODE_ENV: production
+      PORT: "3001"
+      DATABASE_URL: postgresql://ecoverse:${ECOVERSE_POSTGRES_PASSWORD:?Gere uma senha exclusiva}@ecoverse-db:5432/ecoverse?schema=public
+      REDIS_URL: redis://:${ECOVERSE_REDIS_PASSWORD:?Gere uma senha exclusiva}@ecoverse-redis:6379
+      MINIO_ENDPOINT: ecoverse-storage
+      MINIO_PORT: "9000"
+      MINIO_USE_SSL: "false"
+      MINIO_ACCESS_KEY: ecoverse_storage
+      MINIO_SECRET_KEY: ${ECOVERSE_MINIO_PASSWORD:?Gere uma senha exclusiva}
+      MINIO_BUCKET: ecoverse-uploads
+      JWT_SECRET: ${ECOVERSE_JWT_SECRET:?Gere um segredo exclusivo}
+      JWT_REFRESH_SECRET: ${ECOVERSE_JWT_REFRESH_SECRET:?Gere um segredo exclusivo}
+      JWT_EXPIRES_IN: 15m
+      JWT_REFRESH_EXPIRES_IN: 7d
+      TWO_FACTOR_ENCRYPTION_KEY: ${ECOVERSE_2FA_KEY:?Gere uma chave hex de 64 caracteres}
+      APP_PUBLIC_URL: ${ECOVERSE_APP_URL:-https://mosfet.com.br}
+      WEB_PUBLIC_URL: ${ECOVERSE_APP_URL:-https://mosfet.com.br}
+      CORS_ORIGIN: ${ECOVERSE_CORS_ORIGIN:-https://mosfet.com.br,https://www.mosfet.com.br}
+      TRUST_PROXY: "true"
+      EMAIL_ENABLED: ${ECOVERSE_EMAIL_ENABLED:-false}
+      SMTP_HOST: ${ECOVERSE_SMTP_HOST:-}
+      SMTP_PORT: ${ECOVERSE_SMTP_PORT:-587}
+      SMTP_SECURE: ${ECOVERSE_SMTP_SECURE:-false}
+      SMTP_USER: ${ECOVERSE_SMTP_USER:-}
+      SMTP_PASSWORD: ${ECOVERSE_SMTP_PASSWORD:-}
+      SMTP_FROM_NAME: EcoVerse
+      SMTP_FROM_ADDRESS: ${ECOVERSE_SMTP_FROM_ADDRESS:-}
+      EMAIL_VERIFICATION_EXPIRES_MINUTES: "1440"
+      PASSWORD_RESET_EXPIRES_MINUTES: "60"
+      ACCOUNT_DELETION_EXPIRES_MINUTES: "60"
+      BOOTSTRAP_ADMIN_EMAIL: ${ECOVERSE_ADMIN_EMAIL:-}
+      BOOTSTRAP_ADMIN_PASSWORD: ${ECOVERSE_ADMIN_PASSWORD:-}
+      GEOCODING_PROVIDER: ${ECOVERSE_GEOCODING_PROVIDER:-nominatim}
+      GEOCODING_BASE_URL: https://nominatim.openstreetmap.org/search
+      GEOCODING_USER_AGENT: EcoVerse/1.0 (https://mosfet.com.br)
+      GEOCODING_ACCEPT_LANGUAGE: pt-BR
+      GEOCODING_COUNTRY_CODES: br
+      GEOCODING_TIMEOUT_MS: "5000"
+      GEOCODING_EMAIL: ${ECOVERSE_GEOCODING_EMAIL:-}
+      MAPBOX_SECRET_TOKEN: ${ECOVERSE_MAPBOX_SECRET_TOKEN:-}
+    depends_on:
+      ecoverse-db:
+        condition: service_healthy
+      ecoverse-redis:
+        condition: service_healthy
+      ecoverse-storage:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1:3001/health/ready"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 60s
+    networks: [ecoverse_internal]
+
+  ecoverse-db:
+    image: postgis/postgis:16-3.4-alpine
+    restart: unless-stopped
+    logging: *logging
+    environment:
+      POSTGRES_DB: ecoverse
+      POSTGRES_USER: ecoverse
+      POSTGRES_PASSWORD: ${ECOVERSE_POSTGRES_PASSWORD:?Gere uma senha exclusiva}
+      PGDATA: /var/lib/postgresql/data/pgdata
+    volumes:
+      - ecoverse_db_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ecoverse -d ecoverse"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 15s
+    networks: [ecoverse_internal]
+
+  ecoverse-redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    logging: *logging
+    environment:
+      REDIS_PASSWORD: ${ECOVERSE_REDIS_PASSWORD:?Gere uma senha exclusiva}
+    command: ["sh", "-ec", "exec redis-server --requirepass \"$${REDIS_PASSWORD}\" --appendonly yes --maxmemory 256mb --maxmemory-policy allkeys-lru"]
+    volumes:
+      - ecoverse_redis_data:/data
+    healthcheck:
+      test: ["CMD-SHELL", "REDISCLI_AUTH=\"$${REDIS_PASSWORD}\" redis-cli ping | grep -q PONG"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks: [ecoverse_internal]
+
+  ecoverse-storage:
+    image: minio/minio:RELEASE.2025-09-07T16-13-09Z
+    restart: unless-stopped
+    logging: *logging
+    command: ["server", "/data", "--console-address", ":9001"]
+    environment:
+      MINIO_ROOT_USER: ecoverse_storage
+      MINIO_ROOT_PASSWORD: ${ECOVERSE_MINIO_PASSWORD:?Gere uma senha exclusiva}
+    volumes:
+      - ecoverse_minio_data:/data
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://127.0.0.1:9000/minio/health/live"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+    networks: [ecoverse_internal]
+
+volumes:
+  ecoverse_db_data:
+    name: ecoverse_db_data
+  ecoverse_redis_data:
+    name: ecoverse_redis_data
+  ecoverse_minio_data:
+    name: ecoverse_minio_data
+
+networks:
+  ecoverse_internal:
+    driver: bridge
+  ecoverse_proxy:
+    external: true
+    name: ${ECOVERSE_PROXY_NETWORK:-rvproxy_npm_backend_network}

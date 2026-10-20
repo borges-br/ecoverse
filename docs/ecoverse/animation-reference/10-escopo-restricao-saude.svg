@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 680 110" width="100%" height="100%" fill="none">
+  <defs>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&amp;family=Manrope:wght@700&amp;display=swap');
+      .scope-icon-ring {
+        stroke: #7D3B32;
+        stroke-width: 2.6;
+        stroke-linecap: round;
+        stroke-dasharray: 160;
+        stroke-dashoffset: 160;
+        animation: scopeRingIn 4.6s cubic-bezier(0.22, 1, 0.36, 1) infinite;
+      }
+      .scope-slash {
+        stroke: #7D3B32;
+        stroke-width: 2.6;
+        stroke-linecap: round;
+        stroke-dasharray: 40;
+        stroke-dashoffset: 40;
+        animation: scopeSlashIn 4.6s cubic-bezier(0.22, 1, 0.36, 1) infinite;
+      }
+      @keyframes scopeRingIn {
+        0% { stroke-dashoffset: 160; }
+        17.4%, 90% { stroke-dashoffset: 0; }
+        98%, 100% { stroke-dashoffset: 160; }
+      }
+      @keyframes scopeSlashIn {
+        0%, 16% { stroke-dashoffset: 40; }
+        23%, 90% { stroke-dashoffset: 0; }
+        98%, 100% { stroke-dashoffset: 40; }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .scope-icon-ring, .scope-slash { animation: none; stroke-dashoffset: 0; }
+      }
+    </style>
+  </defs>
+
+  <!-- Faixa Editorial #F6E1DC Exata da Página 14 -->
+  <rect x="4" y="8" width="672" height="94" rx="16" fill="#F6E1DC" stroke="#E6C5BE" stroke-width="1.2" />
+
+  <!-- Ícone de Escopo Restrito (Mesma espessura de traço 2.6 dos ícones da pág. 14) -->
+  <g transform="translate(28, 29)">
+    <circle class="scope-icon-ring" cx="26" cy="26" r="22" fill="#FFFFFF" fill-opacity="0.55" />
+    <!-- Seringa simplificada de traço arredondado -->
+    <path d="M 20 32 L 32 20 M 23 17 L 35 29 M 17 35 L 20 32 M 31 16 L 36 21" stroke="#153F35" stroke-width="2.2" stroke-linecap="round" />
+    <!-- Barra diagonal de restrição -->
+    <line class="scope-slash" x1="12" y1="12" x2="40" y2="40" />
+  </g>
+
+  <!-- Texto Oficial da Página 14 -->
+  <text x="98" y="44" font-family="'Manrope', sans-serif" font-size="14.5" font-weight="700" fill="#153F35">
+    Fora do escopo: medicamentos, seringas, perfurocortantes e resíduos de serviços de saúde.
+  </text>
+  <text x="98" y="68" font-family="'DM Sans', sans-serif" font-size="13" fill="#23352D">
+    Outras famílias só entram após definição de parceiro, aceite e regras específicas de acondicionamento.
+  </text>
+</svg>

@@ -1,0 +1,96 @@
+.home { color-scheme: light; }
+.home :is(a, button, input):focus-visible { outline: 2px solid #28735a; outline-offset: 5px; }
+.skipLink { position: fixed; z-index: 100; top: 12px; left: 20px; padding: 12px 18px; border-radius: 8px; background: #f4f3ea; color: #153f35; transform: translateY(-160%); }
+.skipLink:focus { transform: none; }
+.hero { position: relative; isolation: isolate; height: 100vh; height: 100svh; min-height: 680px; overflow: hidden; background: #4d5554; color: #fffdf5; }
+.media, .shade, .poster, .video { position: absolute; inset: 0; width: 100%; height: 100%; }
+.media { z-index: -2; }
+.poster, .video { display: block; object-fit: cover; object-position: center; }
+.video { opacity: 0; transition: opacity 900ms ease; }
+.playing { opacity: 1; }
+.shade { z-index: -1; pointer-events: none; background: linear-gradient(180deg, rgb(10 24 22 / 70%) 0%, rgb(10 24 22 / 46%) 19%, transparent 39%, transparent 68%, rgb(10 24 22 / 70%) 100%); }
+.copy { position: absolute; top: clamp(96px, 10.5vh, 128px); inset-inline: 24px; text-align: center; }
+.copy h1 { margin: 0; font-size: clamp(56px, 5.4vw, 84px); line-height: 1.08; letter-spacing: -.055em; font-weight: 500; text-wrap: balance; text-shadow: 0 2px 24px #102c2525; }
+.copy p { margin: 12px auto 0; max-width: 630px; font-size: clamp(14px, 1.2vw, 18px); line-height: 1.6; font-weight: 400; text-shadow: 0 1px 12px #102c2555; }
+.mobileBreak { display: none; }
+.heroBottom { position: absolute; inset: auto 0 0; padding: 0 max(36px, env(safe-area-inset-right)) max(26px, env(safe-area-inset-bottom)) max(36px, env(safe-area-inset-left)); }
+.actions { display: flex; align-items: center; justify-content: center; gap: 12px; margin-bottom: 42px; }
+.primaryAction, .secondaryAction { display: inline-flex; align-items: center; justify-content: center; gap: 22px; min-height: 54px; padding: 16px 24px; border-radius: 40px; font-size: 13px; font-weight: 600; transition: background .2s, border-color .2s; }
+.primaryAction { color: #153f35; background: #f4f3ea; border: 1px solid #f4f3ea; }
+.primaryAction:hover { background: #dce8de; border-color: #dce8de; }
+.secondaryAction { color: #fffdf5; border: 1px solid #ffffff73; background: #102c2533; }
+.secondaryAction:hover { background: #102c2566; border-color: #fffdf5; }
+.heroCaption { display: flex; align-items: center; justify-content: space-between; gap: 20px; font-size: 10px; letter-spacing: .06em; color: #f4f3ea; }
+.heroCaption a { display: flex; align-items: center; gap: 12px; min-height: 26px; }
+.hero :is(a, button):focus-visible { outline-color: #fffdf5; }
+.search { position: relative; padding-top: 30px; scroll-margin-top: 100px; }
+.home .searchPanel { padding: 32px; background: #fafaf5; border-color: #d7dfd3; border-radius: 16px; }
+.searchHeading { display: flex; justify-content: space-between; align-items: center; gap: 24px; margin-bottom: 24px; }
+.eyebrow { color: #5d6c63; font-size: 10px; letter-spacing: .1em; text-transform: uppercase; margin-bottom: 8px; }
+.home .searchHeading h2 { margin: 0; font-size: 25px; }
+.home :global(#jornada), .home :global(#rede) { scroll-margin-top: 104px; }
+
+@media (min-aspect-ratio: 2/1) and (min-width: 1100px) {
+  .copy { top: 28%; left: 5vw; right: auto; width: 32vw; max-width: 720px; text-align: left; }
+  .copy h1 { font-size: clamp(66px, 5vw, 110px); }
+  .copy p { max-width: 420px; margin-left: 0; }
+  .heroBottom { padding-inline: 5vw; }
+  .actions { justify-content: flex-start; }
+}
+@media (max-height: 800px) and (min-width: 801px) and (max-aspect-ratio: 199/100) {
+  .copy { top: 90px; }
+  .copy h1 { font-size: 64px; }
+  .copy p { margin-top: 8px; font-size: 14px; line-height: 1.5; }
+}
+@media (max-width: 800px) and (orientation: portrait) {
+  .poster, .video { object-position: center 35%; }
+  .hero { min-height: 680px; }
+  .copy { top: 100px; inset-inline: 18px; }
+  .copy h1 { font-size: clamp(36px, 9.8vw, 60px); letter-spacing: -.055em; }
+  .copy p { font-size: 14px; line-height: 1.55; margin-top: 14px; }
+  .mobileBreak { display: initial; }
+  .heroBottom { padding-inline: max(20px, env(safe-area-inset-left)); padding-bottom: max(18px, env(safe-area-inset-bottom)); }
+  .actions { gap: 4px; flex-direction: column; margin-bottom: 14px; }
+  .primaryAction { min-height: 50px; padding: 14px 21px; gap: 18px; }
+  .secondaryAction { min-height: 40px; padding: 9px 12px; background: transparent; border-color: transparent; font-size: 12px; }
+  .heroCaption { justify-content: center; font-size: 9px; }
+  .heroCaption > a { display: none; }
+}
+@media (max-width: 600px) {
+  .search { padding-top: 20px; }
+  .home .searchPanel { padding: 24px 16px 18px; }
+  .searchHeading { flex-direction: column; align-items: flex-start; gap: 16px; margin-bottom: 20px; }
+  .home .searchHeading h2 { font-size: 21px; line-height: 1.3; }
+  .searchHeading > a { font-size: 12px; min-height: 30px; }
+  .home .searchPanel :global(.eco-material-picker) { gap: 8px; }
+  .home .searchPanel :global(.eco-material-picker button) { font-size: 12px; padding: 10px 8px; gap: 6px; }
+  .home .searchPanel :global(.eco-material-picker button > svg.eco-material-symbol) { width: 26px; height: 26px; }
+  .home .searchPanel :global(.eco-material-selected) { width: 13px; flex: none; }
+  .home .searchPanel input { font-size: 16px; }
+}
+@media (max-width: 360px) and (orientation: portrait) {
+  .copy { top: 86px; }
+  .copy h1 { font-size: 36px; }
+  .copy p { font-size: 12px; margin-top: 8px; line-height: 1.5; }
+  .primaryAction { font-size: 12px; padding-inline: 17px; }
+}
+@media (max-height: 740px) and (max-width: 800px) and (orientation: portrait) {
+  .hero { min-height: 650px; }
+  .copy { top: 86px; }
+  .copy h1 { font-size: 34px; }
+  .copy p { font-size: 12px; margin-top: 6px; line-height: 1.4; }
+}
+@media (max-height: 600px) and (orientation: landscape) {
+  .hero { min-height: 450px; }
+  .copy { top: 94px; left: 24px; right: auto; width: 30vw; text-align: left; }
+  .copy h1 { font-size: 44px; }
+  .copy p { font-size: 13px; margin-left: 0; }
+  .heroBottom { padding-inline: 24px; }
+  .actions { justify-content: flex-start; margin-bottom: 18px; }
+  .primaryAction { min-height: 48px; font-size: 12px; padding: 14px 18px; gap: 14px; }
+  .secondaryAction { display: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .video { display: none; transition: none; }
+  .home *, .home *::before, .home *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
+}

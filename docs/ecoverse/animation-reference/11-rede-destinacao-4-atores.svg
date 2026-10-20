@@ -1,0 +1,107 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 210" width="100%" height="100%" fill="none">
+  <defs>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&amp;family=Manrope:wght@700&amp;display=swap');
+      .actor-line-1 {
+        stroke: #28735A;
+        stroke-width: 3.5;
+        stroke-linecap: round;
+        stroke-dasharray: 140;
+        stroke-dashoffset: 140;
+        animation: actorLine1 5s cubic-bezier(0.22, 1, 0.36, 1) infinite;
+      }
+      .actor-line-2 {
+        stroke: #28735A;
+        stroke-width: 3.5;
+        stroke-linecap: round;
+        stroke-dasharray: 140;
+        stroke-dashoffset: 140;
+        animation: actorLine2 5s cubic-bezier(0.22, 1, 0.36, 1) infinite;
+      }
+      .actor-line-3 {
+        stroke: #28735A;
+        stroke-width: 3.5;
+        stroke-linecap: round;
+        stroke-dasharray: 140;
+        stroke-dashoffset: 140;
+        animation: actorLine3 5s cubic-bezier(0.22, 1, 0.36, 1) infinite;
+      }
+      .actor-dest-dot {
+        fill: #CBEA73;
+        transform-origin: 604px 42px;
+        opacity: 0;
+        animation: actorDestDot 5s cubic-bezier(0.34, 1.56, 0.64, 1) infinite;
+      }
+      @keyframes actorLine1 {
+        0%, 2% { stroke-dashoffset: 140; }
+        10%, 90% { stroke-dashoffset: 0; }
+        98%, 100% { stroke-dashoffset: 140; }
+      }
+      @keyframes actorLine2 {
+        0%, 9% { stroke-dashoffset: 140; }
+        17%, 90% { stroke-dashoffset: 0; }
+        98%, 100% { stroke-dashoffset: 140; }
+      }
+      @keyframes actorLine3 {
+        0%, 16% { stroke-dashoffset: 140; }
+        24%, 90% { stroke-dashoffset: 0; }
+        98%, 100% { stroke-dashoffset: 140; }
+      }
+      @keyframes actorDestDot {
+        0%, 22% { opacity: 0; transform: scale(0.2); }
+        28%, 90% { opacity: 1; transform: scale(1); }
+        98%, 100% { opacity: 0; transform: scale(0.2); }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .actor-line-1, .actor-line-2, .actor-line-3 { animation: none; stroke-dashoffset: 0; }
+        .actor-dest-dot { animation: none; opacity: 1; transform: none; }
+      }
+    </style>
+  </defs>
+
+  <!-- Fundo Papel #F4F3EA -->
+  <rect x="4" y="4" width="752" height="202" rx="20" fill="#F4F3EA" stroke="#DCE8DE" stroke-width="1.5" />
+
+  <!-- Trilhas Base em Névoa #DCE8DE -->
+  <line x1="88" y1="54" x2="212" y2="54" stroke="#DCE8DE" stroke-width="3.5" stroke-linecap="round" />
+  <line x1="276" y1="54" x2="400" y2="54" stroke="#DCE8DE" stroke-width="3.5" stroke-linecap="round" />
+  <line x1="464" y1="54" x2="560" y2="54" stroke="#DCE8DE" stroke-width="3.5" stroke-linecap="round" />
+
+  <!-- Trilhas Animadas em Verde Rede #28735A -->
+  <line class="actor-line-1" x1="88" y1="54" x2="212" y2="54" />
+  <line class="actor-line-2" x1="276" y1="54" x2="400" y2="54" />
+  <line class="actor-line-3" x1="464" y1="54" x2="560" y2="54" />
+
+  <!-- ATOR 1: Pessoa -->
+  <circle cx="56" cy="54" r="22" fill="#153F35" />
+  <text x="56" y="60" text-anchor="middle" font-family="'DM Sans', sans-serif" font-size="16" font-weight="700" fill="#F4F3EA">1</text>
+  <text x="34" y="114" font-family="'Manrope', sans-serif" font-size="17" font-weight="700" fill="#153F35">Pessoa</text>
+  <text x="34" y="144" font-family="'DM Sans', sans-serif" font-size="13" fill="#23352D">Separa e registra</text>
+  <text x="34" y="164" font-family="'DM Sans', sans-serif" font-size="11.5" fill="#5D6C63">Escolhe o material e</text>
+  <text x="34" y="180" font-family="'DM Sans', sans-serif" font-size="11.5" fill="#5D6C63">gera o código/QR.</text>
+
+  <!-- ATOR 2: Ponto de coleta -->
+  <circle cx="244" cy="54" r="22" fill="#153F35" />
+  <text x="244" y="60" text-anchor="middle" font-family="'DM Sans', sans-serif" font-size="16" font-weight="700" fill="#F4F3EA">2</text>
+  <text x="222" y="114" font-family="'Manrope', sans-serif" font-size="17" font-weight="700" fill="#153F35">Ponto de coleta</text>
+  <text x="222" y="144" font-family="'DM Sans', sans-serif" font-size="13" fill="#23352D">Recebe e confere</text>
+  <text x="222" y="164" font-family="'DM Sans', sans-serif" font-size="11.5" fill="#5D6C63">Valida regras de aceite</text>
+  <text x="222" y="180" font-family="'DM Sans', sans-serif" font-size="11.5" fill="#5D6C63">e armazena o lote.</text>
+
+  <!-- ATOR 3: Operador de coleta -->
+  <circle cx="432" cy="54" r="22" fill="#153F35" />
+  <text x="432" y="60" text-anchor="middle" font-family="'DM Sans', sans-serif" font-size="16" font-weight="700" fill="#F4F3EA">3</text>
+  <text x="410" y="114" font-family="'Manrope', sans-serif" font-size="17" font-weight="700" fill="#153F35">Operador de coleta</text>
+  <text x="410" y="144" font-family="'DM Sans', sans-serif" font-size="13" fill="#23352D">Retira e transporta</text>
+  <text x="410" y="164" font-family="'DM Sans', sans-serif" font-size="11.5" fill="#5D6C63">Recolhe os lotes no</text>
+  <text x="410" y="180" font-family="'DM Sans', sans-serif" font-size="11.5" fill="#5D6C63">ponto parceiro.</text>
+
+  <!-- ATOR 4: Unidade de destino -->
+  <circle cx="592" cy="54" r="22" fill="#153F35" />
+  <text x="592" y="60" text-anchor="middle" font-family="'DM Sans', sans-serif" font-size="16" font-weight="700" fill="#F4F3EA">4</text>
+  <circle class="actor-dest-dot" cx="610" cy="36" r="6.5" stroke="#153F35" stroke-width="2" />
+  <text x="570" y="114" font-family="'Manrope', sans-serif" font-size="17" font-weight="700" fill="#153F35">Unidade de destino</text>
+  <text x="570" y="144" font-family="'DM Sans', sans-serif" font-size="13" fill="#23352D">Recebe para destinação</text>
+  <text x="570" y="164" font-family="'DM Sans', sans-serif" font-size="11.5" fill="#5D6C63">Triagem fina, reciclagem</text>
+  <text x="570" y="180" font-family="'DM Sans', sans-serif" font-size="11.5" fill="#5D6C63">ou tratamento final.</text>
+</svg>

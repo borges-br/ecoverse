@@ -1,0 +1,293 @@
+
+@import "tailwindcss";
+@config "../tailwind.config.ts";
+
+@layer base {
+  :root {
+    color-scheme: light;
+    --topbar-height: 4.5rem;
+    --mobile-bottom-nav-height: 4.5rem;
+    --mobile-nav-height: var(--mobile-bottom-nav-height);
+    --mobile-bottom-nav-offset: var(--mobile-bottom-nav-height);
+
+    /* dark-mode tokens (used via the .dark class) */
+    --vg-bg: #F4F3EA;
+    --vg-bg-elevated: #ffffff;
+    --vg-bg-soft: #f6f7f8;
+    --vg-border: rgba(15, 23, 42, 0.08);
+    --vg-border-strong: rgba(15, 23, 42, 0.12);
+    --vg-text-primary: #0f1f22;
+    --vg-text-secondary: #51626a;
+    --vg-text-muted: #7a8b94;
+  }
+
+  .dark {
+    color-scheme: dark;
+    --vg-bg: #071a1d;
+    --vg-bg-elevated: #183D32;
+    --vg-bg-soft: #11353a;
+    --vg-border: rgba(255, 255, 255, 0.08);
+    --vg-border-strong: rgba(255, 255, 255, 0.14);
+    --vg-text-primary: #ecf6f5;
+    --vg-text-secondary: #b3c5cb;
+    --vg-text-muted: #7d949b;
+  }
+
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  body {
+    background-color: var(--vg-bg);
+    color: var(--vg-text-primary);
+    @apply font-sans antialiased;
+    font-family: 'DM Sans', ui-sans-serif, system-ui, sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  @media (min-width: 768px) {
+    :root {
+      --topbar-height: 5rem;
+      --mobile-bottom-nav-height: 0rem;
+      --mobile-nav-height: 0rem;
+      --mobile-bottom-nav-offset: 0rem;
+    }
+  }
+}
+
+@layer components {
+  .soft-field {
+    @apply bg-[#eeeeee] border-0 rounded-2xl transition-all duration-200 dark:bg-white/10;
+  }
+
+  .soft-field:focus-within {
+    @apply bg-white shadow-md dark:bg-surface-inkSoft;
+    outline: 2px solid #28735A;
+    outline-offset: -2px;
+  }
+
+  .card {
+    @apply bg-white rounded-2xl shadow-sm dark:bg-surface-inkSoft dark:shadow-none;
+  }
+
+  /* VestGO theme-aware surface utilities — single source of truth for light/dark cards. */
+  .vg-card {
+    background-color: var(--vg-bg-elevated);
+    border: 1px solid var(--vg-border);
+  }
+  .dark .vg-card {
+    border-color: var(--vg-border);
+    box-shadow: 0 1px 0 rgba(255, 255, 255, 0.02) inset;
+  }
+
+  .vg-card-soft {
+    background-color: var(--vg-bg-soft);
+    border: 1px solid var(--vg-border);
+  }
+
+  .vg-page-bg {
+    background-color: var(--vg-bg);
+  }
+
+  .vg-divider {
+    background-color: var(--vg-border);
+  }
+  .vg-divider-strong {
+    background-color: var(--vg-border-strong);
+  }
+
+  .vg-text-primary {
+    color: var(--vg-text-primary);
+  }
+  .vg-text-secondary {
+    color: var(--vg-text-secondary);
+  }
+  .vg-text-muted {
+    color: var(--vg-text-muted);
+  }
+
+  .vg-border {
+    border-color: var(--vg-border);
+  }
+  .vg-border-strong {
+    border-color: var(--vg-border-strong);
+  }
+
+  .vg-hover-soft:hover {
+    background-color: var(--vg-bg-soft);
+  }
+
+  .dark .vg-dark-fix .bg-white:not(.vg-keep-white) {
+    background-color: var(--vg-bg-elevated);
+  }
+
+  .dark .vg-dark-fix .bg-surface {
+    background-color: var(--vg-bg-soft);
+  }
+
+  .dark .vg-dark-fix [class*="bg-surface-cream"] {
+    background-color: var(--vg-bg-soft);
+  }
+
+  .dark .vg-dark-fix [class*="bg-primary-light"] {
+    background-color: rgba(0, 106, 98, 0.2);
+  }
+
+  .dark .vg-dark-fix .bg-amber-50,
+  .dark .vg-dark-fix .bg-amber-100 {
+    background-color: rgba(146, 64, 14, 0.22);
+  }
+
+  .dark .vg-dark-fix .bg-emerald-50,
+  .dark .vg-dark-fix .bg-blue-50,
+  .dark .vg-dark-fix .bg-indigo-50,
+  .dark .vg-dark-fix .bg-sky-50,
+  .dark .vg-dark-fix .bg-cyan-50,
+  .dark .vg-dark-fix .bg-teal-50,
+  .dark .vg-dark-fix .bg-purple-50 {
+    background-color: rgba(255, 255, 255, 0.08);
+  }
+
+  .dark .vg-dark-fix .text-primary-deeper,
+  .dark .vg-dark-fix .text-on-surface {
+    color: var(--vg-text-primary);
+  }
+
+  .dark .vg-dark-fix [class*="text-primary-deeper/"] {
+    color: var(--vg-text-secondary);
+  }
+
+  .dark .vg-dark-fix .text-gray-600,
+  .dark .vg-dark-fix .text-gray-500 {
+    color: var(--vg-text-secondary);
+  }
+
+  .dark .vg-dark-fix .text-gray-400 {
+    color: var(--vg-text-muted);
+  }
+
+  .dark .vg-dark-fix .text-gray-300,
+  .dark .vg-dark-fix .text-gray-200 {
+    color: rgba(125, 148, 155, 0.75);
+  }
+
+  .dark .vg-dark-fix .border-gray-50,
+  .dark .vg-dark-fix .border-gray-100,
+  .dark .vg-dark-fix .border-gray-200 {
+    border-color: var(--vg-border);
+  }
+
+  .dark .vg-dark-fix [class*="border-primary-deeper/"] {
+    border-color: var(--vg-border);
+  }
+
+  .dark .vg-dark-fix .divide-gray-50 > :not([hidden]) ~ :not([hidden]),
+  .dark .vg-dark-fix .divide-gray-100 > :not([hidden]) ~ :not([hidden]) {
+    border-color: var(--vg-border);
+  }
+
+  .dark .vg-dark-fix .shadow-sm,
+  .dark .vg-dark-fix .shadow-card,
+  .dark .vg-dark-fix .shadow-card-lg {
+    box-shadow: none;
+  }
+
+  .vg-map-surface .leaflet-container,
+  .vg-map-surface .leaflet-map-pane {
+    z-index: 0;
+  }
+
+  .vg-map-surface .leaflet-control-container {
+    position: relative;
+    z-index: 20;
+  }
+
+  .dark .leaflet-tile-pane {
+    filter: invert(1) hue-rotate(180deg) brightness(0.9) contrast(0.9);
+  }
+
+  .dark .leaflet-container .leaflet-popup-content-wrapper,
+  .dark .leaflet-container .leaflet-popup-tip {
+    background: var(--vg-bg-elevated);
+    color: var(--vg-text-primary);
+    box-shadow: none;
+  }
+
+  .dark .leaflet-container .leaflet-popup-content p {
+    color: var(--vg-text-secondary) !important;
+  }
+
+  /* Scrollbar invisível mas funcional */
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* --- VestGO v2 design tokens (aditivos, não quebram telas existentes) --- */
+
+  .vg-ink {
+    background-image:
+      radial-gradient(80% 60% at 15% 10%, rgba(33, 211, 196, 0.18), transparent 60%),
+      radial-gradient(60% 50% at 90% 15%, rgba(232, 163, 61, 0.12), transparent 60%),
+      linear-gradient(180deg, #102C25 0%, #153F35 60%, #205C49 100%);
+  }
+
+  .vg-grid-overlay {
+    background-image:
+      linear-gradient(to right, rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+    background-size: 56px 56px;
+    mask-image: radial-gradient(ellipse at center, black 35%, transparent 80%);
+    -webkit-mask-image: radial-gradient(ellipse at center, black 35%, transparent 80%);
+  }
+
+  .vg-noise {
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.6 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+    opacity: 0.04;
+    mix-blend-mode: overlay;
+  }
+
+  .vg-eyebrow {
+    @apply inline-flex items-center gap-2 rounded-full px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.28em];
+  }
+
+  .vg-shimmer {
+    background: linear-gradient(
+      110deg,
+      transparent 20%,
+      rgba(255, 255, 255, 0.25) 40%,
+      rgba(255, 255, 255, 0.6) 50%,
+      rgba(255, 255, 255, 0.25) 60%,
+      transparent 80%
+    );
+    background-size: 200% 100%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .vg-display {
+    font-family: 'DM Sans', ui-sans-serif, system-ui, sans-serif;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    line-height: 0.98;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .vg-motion-safe {
+      animation: none !important;
+      transition: none !important;
+    }
+  }
+}

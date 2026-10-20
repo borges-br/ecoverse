@@ -1,0 +1,460 @@
+type SecurityTemplateInput = {
+  name: string;
+  actionUrl?: string;
+};
+
+type DonationEmailInput = {
+  name: string;
+  donationCode: string;
+  actionUrl: string;
+  collectionPointName?: string | null;
+  ngoName?: string | null;
+  pointsLabel?: string | null;
+};
+
+export type EmailTemplate = {
+  subject: string;
+  text: string;
+  html: string;
+};
+
+function escapeHtml(value: string) {
+  return value
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
+}
+
+function getPublicBaseUrl() {
+  return (
+    process.env.WEB_PUBLIC_URL ??
+    process.env.APP_PUBLIC_URL ??
+    process.env.CORS_ORIGIN?.split(',')[0]?.trim() ??
+    'http://localhost:3000'
+  ).replace(/\/$/, '');
+}
+
+function getEmailLogoUrl() {
+  return `${getPublicBaseUrl()}/favicon/android-chrome-192x192.png`;
+}
+
+function buildTextEmail(lines: string[], actionUrl?: string) {
+  return [
+    ...lines,
+    ...(actionUrl ? ['', `Link: ${actionUrl}`] : []),
+    '',
+    'Este é um e-mail automático do EcoVerse.',
+    'Por favor, não responda esta mensagem.',
+    'Se precisar de ajuda, entre em contato pelos canais oficiais de suporte.',
+  ].filter(Boolean).join('\n');
+}
+
+function buildLayout(title: string, body: string, action?: { label: string; url: string }) {
+  const safeTitle = escapeHtml(title);
+  const logoUrl = getEmailLogoUrl();
+  const actionHtml = action
+    ? `<tr><td style="padding:28px 0 12px"><a href="${escapeHtml(action.url)}" style="display:inline-block;background-color:#006a62;color:#ffffff;text-decoration:none;padding:14px 20px;border-radius:12px;font-weight:700;line-height:1.2;border:1px solid #006a62;font-family:Arial,sans-serif">${escapeHtml(action.label)}</a></td></tr><tr><td style="padding:0;color:#6b7280;font-size:12px;line-height:1.6;font-family:Arial,sans-serif">Se o botão não abrir, copie e cole este link no navegador:<br><a href="${escapeHtml(action.url)}" style="color:#006a62;text-decoration:underline;word-break:break-all">${escapeHtml(action.url)}</a></td></tr>`
+    : '';
+
+  return `<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="color-scheme" content="light dark">
+    <meta name="supported-color-schemes" content="light dark">
+    <title>${safeTitle}</title>
+  </head>
+  <body style="margin:0;background-color:#f2f4f5;font-family:Arial,sans-serif;color:#1a1a1a">
+    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background-color:#f2f4f5;padding:28px 12px">
+      <tr>
+        <td align="center">
+          <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="max-width:600px;background-color:#ffffff;border-radius:18px;border:1px solid #e5e7eb;overflow:hidden">
+            <tr>
+              <td style="background-color:#00333c;padding:24px 28px">
+                <table role="presentation" cellspacing="0" cellpadding="0">
+                  <tr>
+                    <td style="vertical-align:middle;padding-right:12px">
+                      <img src="${escapeHtml(logoUrl)}" width="42" height="42" alt="EcoVerse" style="display:block;border:0;outline:none;text-decoration:none;border-radius:10px">
+                    </td>
+                    <td style="vertical-align:middle">
+                      <p style="margin:0;color:#ffffff;font-size:20px;font-weight:800;line-height:1.2;font-family:Arial,sans-serif">EcoVerse</p>
+                      <p style="margin:2px 0 0;color:#b8f2df;font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;font-family:Arial,sans-serif">Rede ambiental</p>
+                    </td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+            <tr>
+              <td style="padding:32px 28px">
+                <h1 style="margin:0 0 16px;color:#00333c;font-size:24px;line-height:1.25;font-family:Arial,sans-serif">${safeTitle}</h1>
+                ${body}
+                <table role="presentation" width="100%" cellspacing="0" cellpadding="0">
+                  ${actionHtml}
+                </table>
+                <p style="margin:24px 0 0;color:#6b7280;font-size:12px;line-height:1.6;font-family:Arial,sans-serif">Se você não solicitou esta ação, ignore este e-mail ou entre em contato com o suporte.</p>
+              </td>
+            </tr>
+            <tr>
+              <td style="border-top:1px solid #e5e7eb;background-color:#f8faf9;padding:20px 28px;color:#6b7280;font-size:12px;line-height:1.6;font-family:Arial,sans-serif">
+                <p style="margin:0">Este é um e-mail automático do EcoVerse.</p>
+                <p style="margin:4px 0 0">Por favor, não responda esta mensagem.</p>
+                <p style="margin:4px 0 0">Se precisar de ajuda, entre em contato pelos canais oficiais de suporte.</p>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+  </body>
+</html>`;
+}
+
+function paragraph(value: string) {
+  return `<p style="margin:0 0 12px;color:#374151;font-size:15px;line-height:1.7;font-family:Arial,sans-serif">${escapeHtml(value)}</p>`;
+}
+
+export function emailVerificationTemplate(input: SecurityTemplateInput): EmailTemplate {
+  const name = input.name.trim() || 'tudo bem';
+  const actionUrl = input.actionUrl ?? '';
+
+  return {
+    subject: 'Confirme seu e-mail no EcoVerse',
+    text: buildTextEmail(
+      [
+        `Olá, ${name}.`,
+        '',
+        'Confirme seu e-mail para manter sua conta EcoVerse segura e receber comunicações importantes.',
+      ],
+      actionUrl,
+    ),
+    html: buildLayout(
+      'Confirme seu e-mail',
+      paragraph(`Olá, ${name}. Confirme seu e-mail para manter sua conta EcoVerse segura e receber comunicações importantes da sua conta.`),
+      actionUrl ? { label: 'Confirmar e-mail', url: actionUrl } : undefined,
+    ),
+  };
+}
+
+export function passwordResetTemplate(input: SecurityTemplateInput): EmailTemplate {
+  const name = input.name.trim() || 'tudo bem';
+  const actionUrl = input.actionUrl ?? '';
+
+  return {
+    subject: 'Redefina sua senha no EcoVerse',
+    text: buildTextEmail(
+      [
+        `Olá, ${name}.`,
+        '',
+        'Use o link abaixo para redefinir sua senha. Ele expira em breve e só pode ser usado uma vez.',
+      ],
+      actionUrl,
+    ),
+    html: buildLayout(
+      'Redefina sua senha',
+      paragraph(`Olá, ${name}. Use este link para criar uma nova senha. Ele expira em breve e só pode ser usado uma vez.`),
+      actionUrl ? { label: 'Redefinir senha', url: actionUrl } : undefined,
+    ),
+  };
+}
+
+export function passwordChangedTemplate(input: SecurityTemplateInput): EmailTemplate {
+  const name = input.name.trim() || 'tudo bem';
+
+  return {
+    subject: 'Sua senha EcoVerse foi alterada',
+    text: buildTextEmail([
+      `Olá, ${name}.`,
+      '',
+      'Sua senha EcoVerse foi alterada com sucesso. Se você não fez essa alteração, entre em contato com o suporte imediatamente.',
+    ]),
+    html: buildLayout(
+      'Senha alterada',
+      paragraph(`Olá, ${name}. Sua senha EcoVerse foi alterada com sucesso. Se você não fez essa alteração, entre em contato com o suporte imediatamente.`),
+    ),
+  };
+}
+
+export function accountDeletionRequestTemplate(input: SecurityTemplateInput): EmailTemplate {
+  const name = input.name.trim() || 'tudo bem';
+  const actionUrl = input.actionUrl ?? '';
+
+  return {
+    subject: 'Confirme o encerramento da sua conta EcoVerse',
+    text: buildTextEmail(
+      [
+        `Olá, ${name}.`,
+        '',
+        'Recebemos uma solicitação para encerrar sua conta EcoVerse.',
+        'Esta ação é permanente: seu acesso será encerrado e seus dados pessoais serão anonimizados.',
+        'Históricos operacionais de descartes e rastreios podem ser preservados de forma não pessoal para manter a consistência dos registros.',
+        'Se você não solicitou esta ação, ignore este e-mail.',
+      ],
+      actionUrl,
+    ),
+    html: buildLayout(
+      'Confirme o encerramento da conta',
+      [
+        paragraph(`Olá, ${name}. Recebemos uma solicitação para encerrar sua conta EcoVerse.`),
+        paragraph('Esta ação é permanente: seu acesso será encerrado e seus dados pessoais serão anonimizados.'),
+        paragraph('Históricos operacionais de descartes e rastreios podem ser preservados de forma não pessoal para manter a consistência dos registros.'),
+      ].join(''),
+      actionUrl ? { label: 'Confirmar encerramento', url: actionUrl } : undefined,
+    ),
+  };
+}
+
+export function accountDeletedTemplate(input: SecurityTemplateInput): EmailTemplate {
+  const name = input.name.trim() || 'tudo bem';
+
+  return {
+    subject: 'Sua conta EcoVerse foi encerrada',
+    text: buildTextEmail([
+      `Olá, ${name}.`,
+      '',
+      'Sua conta EcoVerse foi encerrada e seus dados pessoais foram anonimizados.',
+      'Históricos operacionais de descartes e rastreios podem ser preservados de forma não pessoal para manter a consistência dos registros.',
+      'Se você não confirmou esta ação, entre em contato com o suporte.',
+    ]),
+    html: buildLayout(
+      'Conta encerrada',
+      [
+        paragraph(`Olá, ${name}. Sua conta EcoVerse foi encerrada e seus dados pessoais foram anonimizados.`),
+        paragraph('Históricos operacionais de descartes e rastreios podem ser preservados de forma não pessoal para manter a consistência dos registros. Se você não confirmou esta ação, entre em contato com o suporte.'),
+      ].join(''),
+    ),
+  };
+}
+
+export function donationRegisteredTemplate(input: DonationEmailInput): EmailTemplate {
+  const name = input.name.trim() || 'tudo bem';
+  const collectionPointName = input.collectionPointName ?? 'o ponto de coleta selecionado';
+
+  return {
+    subject: `Descarte ${input.donationCode} registrada no EcoVerse`,
+    text: buildTextEmail(
+      [
+        `Olá, ${name}.`,
+        '',
+        `Seu descarte ${input.donationCode} foi registrada para ${collectionPointName}.`,
+        'Você pode acompanhar a jornada pelo rastreio no EcoVerse.',
+      ],
+      input.actionUrl,
+    ),
+    html: buildLayout(
+      'Descarte registrado',
+      [
+        paragraph(`Olá, ${name}. Seu descarte ${input.donationCode} foi registrada para ${collectionPointName}.`),
+        paragraph('Você pode acompanhar a jornada pelo rastreio no EcoVerse.'),
+      ].join(''),
+      { label: 'Acompanhar rastreio', url: input.actionUrl },
+    ),
+  };
+}
+
+export function donationStatusTemplate(
+  input: DonationEmailInput & { statusLabel: string; statusMessage: string },
+): EmailTemplate {
+  const name = input.name.trim() || 'tudo bem';
+  const pointsText = input.pointsLabel ? ` ${input.pointsLabel}` : '';
+
+  return {
+    subject: `${input.statusLabel}: descarte ${input.donationCode}`,
+    text: buildTextEmail(
+      [
+        `Olá, ${name}.`,
+        '',
+        `${input.statusMessage}${pointsText}`,
+        'Acompanhe os detalhes pelo rastreio no EcoVerse.',
+      ],
+      input.actionUrl,
+    ),
+    html: buildLayout(
+      input.statusLabel,
+      [
+        paragraph(`Olá, ${name}.`),
+        paragraph(`${input.statusMessage}${pointsText}`),
+        paragraph('Acompanhe os detalhes pelo rastreio no EcoVerse.'),
+      ].join(''),
+      { label: 'Ver rastreio', url: input.actionUrl },
+    ),
+  };
+}
+
+export type PartnershipRequestEmailInput = {
+  ngoName: string;
+  collectionPointName: string;
+  actionUrl: string;
+};
+
+export type PartnershipStatusEmailInput = {
+  collectionPointName: string;
+  ngoName: string;
+  status: 'APPROVED' | 'REJECTED';
+  actionUrl: string;
+};
+
+export type PickupRequestCreatedEmailInput = {
+  collectionPointName: string;
+  ngoName: string;
+  pickupCode: string;
+  actionUrl: string;
+};
+
+export type PickupRequestStatusEmailInput = {
+  ngoName: string;
+  collectionPointName: string;
+  pickupCode: string;
+  status: 'ACCEPTED' | 'REJECTED';
+  actionUrl: string;
+};
+
+export type OperationalBatchStatusEmailInput = {
+  name: string;
+  batchCode: string;
+  statusLabel: string;
+  statusMessage: string;
+  actionUrl: string;
+};
+
+export function partnershipRequestTemplate(input: PartnershipRequestEmailInput): EmailTemplate {
+  const ngoName = input.ngoName.trim() || 'tudo bem';
+  const pointName = input.collectionPointName.trim();
+  return {
+    subject: `Nova solicitação de parceria no EcoVerse: ${pointName}`,
+    text: buildTextEmail(
+      [
+        `Olá, ${ngoName}.`,
+        '',
+        `O ponto de coleta "${pointName}" solicitou uma parceria com a seu operador no EcoVerse.`,
+        'Acesse a plataforma para analisar os detalhes da solicitação e decidir sobre a aprovação.',
+      ],
+      input.actionUrl,
+    ),
+    html: buildLayout(
+      'Nova solicitação de parceria',
+      [
+        paragraph(`Olá, ${ngoName}.`),
+        paragraph(`O ponto de coleta "${pointName}" solicitou uma parceria com a seu operador no EcoVerse.`),
+        paragraph('Acesse a plataforma para analisar os detalhes da solicitação e decidir sobre a aprovação.'),
+      ].join(''),
+      { label: 'Ver solicitação', url: input.actionUrl },
+    ),
+  };
+}
+
+export function partnershipStatusTemplate(input: PartnershipStatusEmailInput): EmailTemplate {
+  const pointName = input.collectionPointName.trim() || 'tudo bem';
+  const ngoName = input.ngoName.trim();
+  const isApproved = input.status === 'APPROVED';
+  const statusLabel = isApproved ? 'aprovada' : 'rejeitada';
+  const statusText = isApproved
+    ? `A Operador "${ngoName}" aceitou a sua solicitação de parceria! A partir de agora, vocês podem colaborar operacionalmente.`
+    : `A Operador "${ngoName}" rejeitou a sua solicitação de parceria no momento.`;
+
+  return {
+    subject: `Parceria ${statusLabel} no EcoVerse: ${ngoName}`,
+    text: buildTextEmail(
+      [
+        `Olá, ${pointName}.`,
+        '',
+        statusText,
+        'Acesse a plataforma para visualizar os detalhes.',
+      ],
+      input.actionUrl,
+    ),
+    html: buildLayout(
+      `Parceria ${statusLabel}`,
+      [
+        paragraph(`Olá, ${pointName}.`),
+        paragraph(statusText),
+        paragraph('Acesse a plataforma para visualizar os detalhes.'),
+      ].join(''),
+      { label: 'Ver parcerias', url: input.actionUrl },
+    ),
+  };
+}
+
+export function pickupRequestCreatedTemplate(input: PickupRequestCreatedEmailInput): EmailTemplate {
+  const pointName = input.collectionPointName.trim() || 'tudo bem';
+  const ngoName = input.ngoName.trim();
+  return {
+    subject: `Nova solicitação de retirada no EcoVerse: ${ngoName}`,
+    text: buildTextEmail(
+      [
+        `Olá, ${pointName}.`,
+        '',
+        `A Operador "${ngoName}" criou uma nova solicitação de retirada (Código: ${input.pickupCode}) direcionada ao seu ponto de coleta.`,
+        'Por favor, confirme se você pode atender a essa solicitação aceitando-a na plataforma.',
+      ],
+      input.actionUrl,
+    ),
+    html: buildLayout(
+      'Nova solicitação de retirada',
+      [
+        paragraph(`Olá, ${pointName}.`),
+        paragraph(`A Operador "${ngoName}" criou uma nova solicitação de retirada (Código: ${input.pickupCode}) direcionada ao seu ponto de coleta.`),
+        paragraph('Por favor, confirme se você pode atender a essa solicitação aceitando-a na plataforma.'),
+      ].join(''),
+      { label: 'Ver solicitação', url: input.actionUrl },
+    ),
+  };
+}
+
+export function pickupRequestStatusTemplate(input: PickupRequestStatusEmailInput): EmailTemplate {
+  const ngoName = input.ngoName.trim() || 'tudo bem';
+  const pointName = input.collectionPointName.trim();
+  const isAccepted = input.status === 'ACCEPTED';
+  const statusText = isAccepted
+    ? `O ponto de coleta "${pointName}" aceitou a sua solicitação de retirada ${input.pickupCode}. Eles estão prontos para receber ou processar a coleta.`
+    : `O ponto de coleta "${pointName}" rejeitou a sua solicitação de retirada ${input.pickupCode}.`;
+
+  return {
+    subject: `Solicitação de retirada ${isAccepted ? 'aceita' : 'rejeitada'} no EcoVerse: ${input.pickupCode}`,
+    text: buildTextEmail(
+      [
+        `Olá, ${ngoName}.`,
+        '',
+        statusText,
+        'Acesse a plataforma para acompanhar os detalhes.',
+      ],
+      input.actionUrl,
+    ),
+    html: buildLayout(
+      `Retirada ${isAccepted ? 'aceita' : 'rejeitada'}`,
+      [
+        paragraph(`Olá, ${ngoName}.`),
+        paragraph(statusText),
+        paragraph('Acesse a plataforma para acompanhar os detalhes.'),
+      ].join(''),
+      { label: 'Ver retiradas', url: input.actionUrl },
+    ),
+  };
+}
+
+export function operationalBatchStatusTemplate(input: OperationalBatchStatusEmailInput): EmailTemplate {
+  const name = input.name.trim() || 'tudo bem';
+  return {
+    subject: `${input.statusLabel} no EcoVerse: ${input.batchCode}`,
+    text: buildTextEmail(
+      [
+        `Olá, ${name}.`,
+        '',
+        input.statusMessage,
+        'Você pode acompanhar todos os detalhes do lote operacional pela plataforma.',
+      ],
+      input.actionUrl,
+    ),
+    html: buildLayout(
+      input.statusLabel,
+      [
+        paragraph(`Olá, ${name}.`),
+        paragraph(input.statusMessage),
+        paragraph('Você pode acompanhar todos os detalhes do lote operacional pela plataforma.'),
+      ].join(''),
+      { label: 'Ver lote', url: input.actionUrl },
+    ),
+  };
+}

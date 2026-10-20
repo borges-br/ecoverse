@@ -1,0 +1,31 @@
+.env*
+!.env.example
+!.env.portainer.example
+.claude
+.validation
+
+node_modules/
+api/node_modules/
+web/node_modules/
+
+dist/
+api/dist/
+.next/
+web/.next/
+web/.next-cinematic-*/
+web/.next-ecoverse-*/
+
+coverage/
+*.log
+.DS_Store
+Thumbs.db
+*.tsbuildinfo
+
+# Backups e arquivos intermediarios locais
+/tmp/
+
+# Local exports, source media duplicates and historical academic attachments
+/output/
+/hero/
+/web/public/atividades/
+/tools/deploy/*.private.*

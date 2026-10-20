@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 220 220" width="100%" height="100%" fill="none">
+  <defs>
+    <style>
+      .ev-avatar-ring {
+        fill: #28735A;
+        transform-origin: 110px 110px;
+        animation: evRingReveal 4.6s cubic-bezier(0.22, 1, 0.36, 1) infinite;
+      }
+      .ev-avatar-trace {
+        stroke: #F4F3EA;
+        stroke-width: 11;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+        stroke-dasharray: 260;
+        stroke-dashoffset: 260;
+        animation: evAvatarTrace 4.6s cubic-bezier(0.22, 1, 0.36, 1) infinite;
+      }
+      .ev-avatar-dot {
+        fill: #CBEA73;
+        transform-origin: 82px 70px;
+        opacity: 0;
+        animation: evAvatarDot 4.6s cubic-bezier(0.34, 1.56, 0.64, 1) infinite;
+      }
+      @keyframes evRingReveal {
+        0% { transform: scale(0.94); opacity: 0.7; }
+        17.4%, 90% { transform: scale(1); opacity: 1; }
+        98%, 100% { transform: scale(0.94); opacity: 0.7; }
+      }
+      @keyframes evAvatarTrace {
+        0% { stroke-dashoffset: 260; }
+        17.4%, 90% { stroke-dashoffset: 0; }
+        98%, 100% { stroke-dashoffset: 260; }
+      }
+      @keyframes evAvatarDot {
+        0%, 16.5% { opacity: 0; transform: scale(0.2); }
+        22.8%, 90% { opacity: 1; transform: scale(1); }
+        98%, 100% { opacity: 0; transform: scale(0.2); }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .ev-avatar-ring { animation: none; transform: none; opacity: 1; }
+        .ev-avatar-trace { animation: none; stroke-dashoffset: 0; }
+        .ev-avatar-dot { animation: none; opacity: 1; transform: none; }
+      }
+    </style>
+  </defs>
+
+  <!-- Anel Externo Verde Rede #28735A e Círculo Interno Floresta #153F35 (Idêntico à Capa pág. 1) -->
+  <circle class="ev-avatar-ring" cx="110" cy="110" r="96" />
+  <circle cx="110" cy="110" r="72" fill="#153F35" />
+
+  <!-- Símbolo "e." na Malha 100x100 escalado no centro -->
+  <g transform="translate(50, 50) scale(1.2)">
+    <path class="ev-avatar-trace" d="M 20 50 L 82 50 C 82 32.327 67.673 18 50 18 C 32.327 18 18 32.327 18 50 C 18 67.673 32.327 82 50 82 C 56.3 82 62.2 80.2 67.2 77" />
+    <circle class="ev-avatar-dot" cx="82" cy="70" r="6.5" />
+  </g>
+</svg>

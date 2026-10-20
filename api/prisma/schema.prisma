@@ -1,0 +1,499 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  DONOR
+  COLLECTION_POINT
+  NGO
+  ADMIN
+}
+
+enum DonationStatus {
+  PENDING
+  AT_POINT
+  IN_TRANSIT
+  DELIVERED
+  DISTRIBUTED
+  CANCELLED
+}
+
+enum ItemCategory {
+  BATTERIES
+  ELECTRONICS
+  LAMPS
+  COOKING_OIL
+  CLOTHING
+  SHOES
+  ACCESSORIES
+  BAGS
+  TOYS
+  FOOD
+  OTHER
+}
+
+enum DonationItemCondition {
+  EXCELLENT
+  GOOD
+}
+
+enum DonationPackageType {
+  BAG
+  BOX
+}
+
+enum DonationPackageSize {
+  SMALL
+  MEDIUM
+  LARGE
+}
+
+enum PublicProfileState {
+  DRAFT
+  PENDING
+  ACTIVE
+  VERIFIED
+}
+
+enum OperationalPartnershipStatus {
+  PENDING
+  ACTIVE
+  REJECTED
+}
+
+enum NotificationType {
+  DONATION_STATUS
+  DONATION_POINTS
+  BADGE_EARNED
+  DONATION_CREATED_FOR_POINT
+  PARTNERSHIP_REQUEST_RECEIVED
+  PARTNERSHIP_STATUS_CHANGED
+  PICKUP_REQUEST_CREATED
+  PICKUP_REQUEST_RECEIVED
+  PICKUP_REQUEST_STATUS_CHANGED
+  PROFILE_APPROVAL_REQUIRED
+  PROFILE_REVISION_PENDING
+}
+
+enum PickupRequestStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum OperationalBatchStatus {
+  OPEN
+  READY_TO_SHIP
+  IN_TRANSIT
+  DELIVERED
+  CLOSED
+  CANCELLED
+}
+
+enum PublicProfileRevisionStatus {
+  PENDING
+  REJECTED
+}
+
+enum UserTokenType {
+  EMAIL_VERIFICATION
+  PASSWORD_RESET
+  ACCOUNT_DELETION
+}
+
+enum PointLedgerSourceType {
+  ACHIEVEMENT_TIER
+  ADMIN_ADJUSTMENT
+  DONATION_CONFIRMATION
+  DONATION_DISTRIBUTION
+}
+
+model User {
+  id                        String    @id @default(cuid())
+  name                      String
+  email                     String    @unique
+  passwordHash              String
+  role                      UserRole  @default(DONOR)
+  birthDate                 DateTime?
+  avatarUrl                 String?
+  coverImageUrl             String?
+  galleryImageUrls          String[]  @default([])
+  phone                     String?
+  cpf                       String?   @unique
+  emailVerifiedAt           DateTime?
+  emailNotificationsEnabled Boolean   @default(true)
+  anonymizedAt              DateTime?
+
+  organizationName                 String?
+  cnpj                             String?                      @unique
+  description                      String?
+  purpose                          String?
+  address                          String?
+  addressNumber                    String?
+  addressComplement                String?
+  neighborhood                     String?
+  zipCode                          String?
+  city                             String?
+  state                            String?
+  latitude                         Float?
+  longitude                        Float?
+  openingHours                     String?
+  openingSchedule                  Json?
+  openingHoursExceptions           String?
+  publicNotes                      String?
+  operationalNotes                 String?
+  accessibilityDetails             String?
+  accessibilityFeatures            String[]                     @default([])
+  verificationNotes                String?
+  estimatedCapacity                String?
+  serviceRegions                   String[]                     @default([])
+  rules                            String[]                     @default([])
+  nonAcceptedItems                 String[]                     @default([])
+  acceptedCategories               ItemCategory[]               @default([])
+  donationInterestCategories       ItemCategory[]               @default([])
+  publicProfileState               PublicProfileState           @default(DRAFT)
+  verifiedAt                       DateTime?
+  pendingPublicRevision            Json?
+  pendingPublicRevisionStatus      PublicProfileRevisionStatus?
+  pendingPublicRevisionFields      String[]                     @default([])
+  pendingPublicRevisionSubmittedAt DateTime?
+  pendingPublicRevisionReviewedAt  DateTime?
+  pendingPublicRevisionReviewNotes String?
+
+  donations                           Donation[]               @relation("DonorDonations")
+  collectedAt                         Donation[]               @relation("CollectionPointDonations")
+  receivedAt                          Donation[]               @relation("NgoDonations")
+  outgoingOperationalPartnerships     OperationalPartnership[] @relation("CollectionPointOperationalPartnerships")
+  incomingOperationalPartnerships     OperationalPartnership[] @relation("NgoOperationalPartnerships")
+  operationalBatchesAsCollectionPoint OperationalBatch[]       @relation("OperationalBatchCollectionPoint")
+  operationalBatchesAsNgo             OperationalBatch[]       @relation("OperationalBatchNgo")
+  createdOperationalBatches           OperationalBatch[]       @relation("OperationalBatchCreatedBy")
+  dispatchedOperationalBatches        OperationalBatch[]       @relation("OperationalBatchDispatchedBy")
+  deliveredOperationalBatches         OperationalBatch[]       @relation("OperationalBatchDeliveredBy")
+  addedOperationalBatchItems          OperationalBatchItem[]   @relation("OperationalBatchItemAddedBy")
+  pickupRequestsToApprove             PickupRequest[]          @relation("CollectionPointPickupRequests")
+  pickupRequestsRequested             PickupRequest[]          @relation("NgoPickupRequests")
+  notifications                       Notification[]
+  tokens                              UserToken[]
+  sessions                            UserSession[]
+  twoFactor                           UserTwoFactor?
+  pointLedger                         PointLedger[]
+  achievements                        UserAchievement[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("users")
+}
+
+model PointLedger {
+  id         String                @id @default(cuid())
+  user       User                  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId     String
+  sourceType PointLedgerSourceType
+  sourceKey  String
+  points     Int
+  reason     String
+  metadata   Json?
+  createdAt  DateTime              @default(now())
+
+  @@unique([userId, sourceType, sourceKey])
+  @@index([userId, createdAt])
+  @@map("point_ledger")
+}
+
+model UserAchievement {
+  id            String   @id @default(cuid())
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId        String
+  key           String
+  tier          String?
+  hidden        Boolean  @default(false)
+  pointsAwarded Int      @default(0)
+  lastProgress  Json?
+  unlockedAt    DateTime?
+  updatedAt     DateTime @updatedAt
+  createdAt     DateTime @default(now())
+
+  @@unique([userId, key])
+  @@index([userId, updatedAt])
+  @@map("user_achievements")
+}
+
+model UserToken {
+  id        String        @id @default(cuid())
+  user      User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String
+  type      UserTokenType
+  tokenHash String        @unique
+  expiresAt DateTime
+  usedAt    DateTime?
+  revokedAt DateTime?
+  createdAt DateTime      @default(now())
+
+  @@index([userId, type, expiresAt])
+  @@map("user_tokens")
+}
+
+model UserSession {
+  id               String    @id @default(cuid())
+  user             User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId           String
+  refreshTokenHash String    @unique
+  userAgent        String?
+  ipAddress        String?
+  deviceLabel      String?
+  createdAt        DateTime  @default(now())
+  lastUsedAt       DateTime  @default(now())
+  expiresAt        DateTime
+  revokedAt        DateTime?
+
+  @@index([userId, revokedAt, lastUsedAt])
+  @@map("user_sessions")
+}
+
+model UserTwoFactor {
+  id              String    @id @default(cuid())
+  user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId          String    @unique
+  secretEncrypted String
+  enabledAt       DateTime?
+  recoveryCodes   UserTwoFactorRecoveryCode[]
+  lastVerifiedAt  DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("user_two_factor")
+}
+
+model UserTwoFactorRecoveryCode {
+  id          String        @id @default(cuid())
+  twoFactor   UserTwoFactor @relation(fields: [twoFactorId], references: [id], onDelete: Cascade)
+  twoFactorId String
+  codeHash    String
+  usedAt      DateTime?
+
+  createdAt DateTime @default(now())
+
+  @@index([twoFactorId, usedAt])
+  @@map("user_two_factor_recovery_codes")
+}
+
+model Donation {
+  id     String         @id @default(cuid())
+  code   String         @unique @default(cuid())
+  status DonationStatus @default(PENDING)
+
+  donor   User   @relation("DonorDonations", fields: [donorId], references: [id])
+  donorId String
+
+  collectionPoint   User?   @relation("CollectionPointDonations", fields: [collectionPointId], references: [id])
+  collectionPointId String?
+
+  ngo   User?   @relation("NgoDonations", fields: [ngoId], references: [id])
+  ngoId String?
+
+  operationalPartnership   OperationalPartnership? @relation("DonationOperationalPartnership", fields: [operationalPartnershipId], references: [id])
+  operationalPartnershipId String?
+
+  seasonalCampaign   SeasonalCampaign? @relation(fields: [seasonalCampaignId], references: [id])
+  seasonalCampaignId String?
+
+  items                DonationItem[]
+  packages             DonationPackage[]
+  timeline             DonationEvent[]
+  operationalBatchItem OperationalBatchItem?
+
+  notes       String?
+  scheduledAt DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([seasonalCampaignId])
+  @@map("donations")
+}
+
+model SeasonalCampaign {
+  id          String         @id @default(cuid())
+  slug        String         @unique
+  title       String
+  description String?
+  startsAt    DateTime
+  endsAt      DateTime
+  categories  ItemCategory[] @default([])
+  multiplier  Float          @default(2)
+  active      Boolean        @default(true)
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+
+  donations Donation[]
+
+  @@index([active, startsAt, endsAt])
+  @@map("seasonal_campaigns")
+}
+
+model OperationalPartnership {
+  id                String                       @id @default(cuid())
+  collectionPoint   User                         @relation("CollectionPointOperationalPartnerships", fields: [collectionPointId], references: [id], onDelete: Cascade)
+  collectionPointId String
+  ngo               User                         @relation("NgoOperationalPartnerships", fields: [ngoId], references: [id], onDelete: Cascade)
+  ngoId             String
+  status            OperationalPartnershipStatus @default(PENDING)
+  isActive          Boolean                      @default(false)
+  priority          Int                          @default(0)
+  notes             String?
+
+  donations      Donation[]      @relation("DonationOperationalPartnership")
+  pickupRequests PickupRequest[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([collectionPointId, ngoId])
+  @@index([collectionPointId, status, priority])
+  @@index([ngoId, status, priority])
+  @@map("operational_partnerships")
+}
+
+model OperationalBatch {
+  id                String                 @id @default(cuid())
+  code              String                 @unique
+  name              String
+  collectionPoint   User                   @relation("OperationalBatchCollectionPoint", fields: [collectionPointId], references: [id], onDelete: Restrict)
+  collectionPointId String
+  ngo               User                   @relation("OperationalBatchNgo", fields: [ngoId], references: [id], onDelete: Restrict)
+  ngoId             String
+  primaryCategory   ItemCategory?
+  status            OperationalBatchStatus @default(OPEN)
+  notes             String?
+
+  createdBy      User    @relation("OperationalBatchCreatedBy", fields: [createdById], references: [id], onDelete: Restrict)
+  createdById    String
+  dispatchedBy   User?   @relation("OperationalBatchDispatchedBy", fields: [dispatchedById], references: [id], onDelete: Restrict)
+  dispatchedById String?
+  deliveredBy    User?   @relation("OperationalBatchDeliveredBy", fields: [deliveredById], references: [id], onDelete: Restrict)
+  deliveredById  String?
+
+  dispatchedAt DateTime?
+  deliveredAt  DateTime?
+  closedAt     DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  items OperationalBatchItem[]
+
+  @@index([collectionPointId, status, createdAt])
+  @@index([ngoId, status, createdAt])
+  @@map("operational_batches")
+}
+
+model OperationalBatchItem {
+  id         String           @id @default(cuid())
+  batch      OperationalBatch @relation(fields: [batchId], references: [id], onDelete: Cascade)
+  batchId    String
+  donation   Donation         @relation(fields: [donationId], references: [id], onDelete: Restrict)
+  donationId String
+  addedBy    User             @relation("OperationalBatchItemAddedBy", fields: [addedById], references: [id], onDelete: Restrict)
+  addedById  String
+  addedAt    DateTime         @default(now())
+
+  @@unique([donationId])
+  @@index([batchId])
+  @@map("operational_batch_items")
+}
+
+model DonationItem {
+  id         String   @id @default(cuid())
+  donation   Donation @relation(fields: [donationId], references: [id], onDelete: Cascade)
+  donationId String
+
+  name        String
+  category    ItemCategory          @default(BATTERIES)
+  quantity    Float                 @default(1)
+  condition   DonationItemCondition @default(GOOD)
+  description String?
+  imageUrl    String?
+  weightKg    Float?
+
+  @@map("donation_items")
+}
+
+model DonationPackage {
+  id         String   @id @default(cuid())
+  donation   Donation @relation(fields: [donationId], references: [id], onDelete: Cascade)
+  donationId String
+
+  type     DonationPackageType
+  size     DonationPackageSize
+  quantity Int                 @default(1)
+
+  @@index([donationId])
+  @@map("donation_packages")
+}
+
+model DonationEvent {
+  id         String   @id @default(cuid())
+  donation   Donation @relation(fields: [donationId], references: [id], onDelete: Cascade)
+  donationId String
+
+  status      DonationStatus
+  description String
+  createdBy   String?
+  location    String?
+
+  createdAt DateTime @default(now())
+
+  @@map("donation_events")
+}
+
+model Notification {
+  id      String           @id @default(cuid())
+  user    User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId  String
+  type    NotificationType
+  title   String
+  body    String
+  href    String?
+  payload Json?
+  readAt  DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId, createdAt])
+  @@index([userId, readAt, createdAt])
+  @@map("notifications")
+}
+
+model PickupRequest {
+  id                       String                 @id @default(cuid())
+  operationalPartnership   OperationalPartnership @relation(fields: [operationalPartnershipId], references: [id], onDelete: Cascade)
+  operationalPartnershipId String
+  collectionPoint          User                   @relation("CollectionPointPickupRequests", fields: [collectionPointId], references: [id], onDelete: Cascade)
+  collectionPointId        String
+  ngo                      User                   @relation("NgoPickupRequests", fields: [ngoId], references: [id], onDelete: Cascade)
+  ngoId                    String
+  status                   PickupRequestStatus    @default(PENDING)
+  requestedDate            DateTime?
+  timeWindowStart          String?
+  timeWindowEnd            String?
+  notes                    String?
+  responseNotes            String?
+  respondedAt              DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([collectionPointId, status, createdAt])
+  @@index([ngoId, status, createdAt])
+  @@index([operationalPartnershipId, status, createdAt])
+  @@map("pickup_requests")
+}

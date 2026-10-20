@@ -1,0 +1,67 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 864 210" width="100%" height="100%" fill="none">
+  <defs>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&amp;family=Manrope:wght@700&amp;display=swap');
+      .ev-grafismo-path {
+        stroke: #28735A;
+        stroke-width: 19;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+        stroke-dasharray: 820;
+        stroke-dashoffset: 820;
+        animation: evGrafismoDraw 4.6s cubic-bezier(0.22, 1, 0.36, 1) infinite;
+      }
+      .ev-grafismo-dot {
+        fill: #CBEA73;
+        transform-origin: 793px 113px;
+        opacity: 0;
+        animation: evGrafismoDot 4.6s cubic-bezier(0.34, 1.56, 0.64, 1) infinite;
+      }
+      .ev-step-label {
+        font-family: 'Manrope', sans-serif;
+        font-weight: 700;
+        font-size: 15px;
+        fill: #153F35;
+      }
+      .ev-step-desc {
+        font-family: 'DM Sans', sans-serif;
+        font-weight: 400;
+        font-size: 13px;
+        fill: #23352D;
+      }
+      @keyframes evGrafismoDraw {
+        0% { stroke-dashoffset: 820; }
+        17.4%, 90% { stroke-dashoffset: 0; }
+        98%, 100% { stroke-dashoffset: 820; }
+      }
+      @keyframes evGrafismoDot {
+        0%, 16.5% { opacity: 0; transform: scale(0.2); }
+        22.8%, 90% { opacity: 1; transform: scale(1); }
+        98%, 100% { opacity: 0; transform: scale(0.2); }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .ev-grafismo-path { animation: none; stroke-dashoffset: 0; }
+        .ev-grafismo-dot { animation: none; opacity: 1; transform: none; }
+      }
+    </style>
+  </defs>
+
+  <!-- Painel Floresta #153F35 Exato da Página 16 -->
+  <rect x="0" y="0" width="864" height="148" rx="18" fill="#153F35" />
+
+  <!-- Traço de Percurso (Coordenadas Exatas da Página 16) -->
+  <path class="ev-grafismo-path" d="M 43 96 L 217 96 C 267 96 267 42 318 42 L 542 42 C 592 42 592 113 642 113 L 793 113" />
+
+  <!-- Ponto de Destino Lima (#CBEA73) -->
+  <circle class="ev-grafismo-dot" cx="793" cy="113" r="12" />
+
+  <!-- Rótulos de Cadência (01 Entrada / 02 Conexão / 03 Repouso) -->
+  <text class="ev-step-label" x="4" y="178">01 / Entrada</text>
+  <text class="ev-step-desc" x="4" y="198">Traço aparece em 800 ms.</text>
+
+  <text class="ev-step-label" x="296" y="178">02 / Conexão</text>
+  <text class="ev-step-desc" x="296" y="198">Ponto entra em 250 ms.</text>
+
+  <text class="ev-step-label" x="588" y="178">03 / Repouso</text>
+  <text class="ev-step-desc" x="588" y="198">Símbolo completo fica estático.</text>
+</svg>

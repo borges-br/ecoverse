@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 220 140" fill="none"><style>
+.eco-draw{stroke:#153F35;stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:200;stroke-dashoffset:200;animation:draw .8s ease-out forwards}
+.eco-dot{opacity:0;animation:dot .25s ease-out .8s forwards}@keyframes draw{to{stroke-dashoffset:0}}@keyframes dot{to{opacity:1}}
+@media(prefers-reduced-motion:reduce){.eco-draw{animation:none;stroke-dashoffset:0}.eco-dot{animation:none;opacity:1}}
+</style><rect x="10" y="10" width="200" height="120" rx="12" fill="#DCE8DE"/><g transform="translate(74 38) scale(1.5)">
+    <path class="eco-draw" d="M 16 31 C 15 24 10 24 10 17 C 10 0 38 0 38 17 C 38 24 33 25 32 31" />
+    <path class="eco-draw" d="M 17 33 L 31 33 M 18 39 L 30 39 M 21 44 L 27 44" />
+  </g><circle class="eco-dot" cx="182" cy="34" r="6" fill="#28735A"/></svg>

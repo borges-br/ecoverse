@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 220 260" width="100%" height="100%" fill="none">
+  <defs>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500&amp;family=Manrope:wght@700&amp;display=swap');
+      .mat-stroke-4 {
+        stroke: #153F35;
+        stroke-width: 2.6;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+        stroke-dasharray: 180;
+        stroke-dashoffset: 180;
+        animation: matDraw4 4.6s cubic-bezier(0.22, 1, 0.36, 1) infinite;
+      }
+      .mat-accent-4 {
+        fill: #28735A;
+        transform-origin: 182px 34px;
+        opacity: 0;
+        animation: matDot4 4.6s cubic-bezier(0.34, 1.56, 0.64, 1) infinite;
+      }
+      @keyframes matDraw4 {
+        0% { stroke-dashoffset: 180; }
+        17.4%, 90% { stroke-dashoffset: 0; }
+        98%, 100% { stroke-dashoffset: 180; }
+      }
+      @keyframes matDot4 {
+        0%, 16.5% { opacity: 0; transform: scale(0.2); }
+        22.8%, 90% { opacity: 1; transform: scale(1); }
+        98%, 100% { opacity: 0; transform: scale(0.2); }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .mat-stroke-4 { animation: none; stroke-dashoffset: 0; }
+        .mat-accent-4 { animation: none; opacity: 1; transform: none; }
+      }
+    </style>
+  </defs>
+
+  <!-- Card Branco Oficial -->
+  <rect x="6" y="6" width="208" height="248" rx="18" fill="#FFFFFF" stroke="#DCE8DE" stroke-width="1.5" />
+
+  <!-- Plano Editorial Âmbar Suave #F4E5C9 (Pág. 14) -->
+  <rect x="20" y="20" width="180" height="108" rx="12" fill="#F4E5C9" />
+  <circle class="mat-accent-4" cx="182" cy="34" r="6" />
+
+  <!-- Ícone Oficial de Óleo de Cozinha (Coordenadas Exatas da Pág. 14) -->
+  <g transform="translate(74, 38) scale(1.5)">
+    <rect class="mat-stroke-4" x="18" y="2" width="12" height="7" rx="2" />
+    <path class="mat-stroke-4" d="M 18 9 L 18 14 C 10 18 11 20 11 26 L 11 40 C 11 45 37 45 37 40 L 37 26 C 37 20 38 18 30 14 L 30 9" />
+    <path class="mat-stroke-4" d="M 16 30 L 32 30" />
+  </g>
+
+  <!-- Rótulo Explícito e Orientação -->
+  <text x="22" y="162" font-family="'Manrope', sans-serif" font-size="17" font-weight="700" fill="#153F35">Óleo de cozinha</text>
+  <text x="22" y="192" font-family="'DM Sans', sans-serif" font-size="13" fill="#23352D">Cadastro futuro deve</text>
+  <text x="22" y="210" font-family="'DM Sans', sans-serif" font-size="13" fill="#23352D">considerar volume.</text>
+</svg>
