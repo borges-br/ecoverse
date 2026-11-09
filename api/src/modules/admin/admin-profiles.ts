@@ -307,7 +307,7 @@ export default async function adminProfileRoutes(fastify: FastifyInstance) {
         return reply.code(422).send({
           error: 'VALIDATION_ERROR',
           message: 'Parametros invalidos',
-          issues: err.errors,
+          issues: err.issues,
         });
       }
       throw err;
@@ -353,7 +353,7 @@ export default async function adminProfileRoutes(fastify: FastifyInstance) {
         return reply.code(422).send({
           error: 'VALIDATION_ERROR',
           message: 'Dados invalidos',
-          issues: err.errors,
+          issues: err.issues,
         });
       }
       throw err;
@@ -499,7 +499,7 @@ export default async function adminProfileRoutes(fastify: FastifyInstance) {
         return reply.code(422).send({
           error: 'VALIDATION_ERROR',
           message: 'Dados invalidos',
-          issues: err.errors,
+          issues: err.issues,
         });
       }
       throw err;

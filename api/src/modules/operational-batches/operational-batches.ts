@@ -462,7 +462,7 @@ export default async function operationalBatchRoutes(fastify: FastifyInstance) {
         return reply.code(422).send({
           error: 'VALIDATION_ERROR',
           message: 'Parametros invalidos para cargas operacionais',
-          issues: err.errors,
+          issues: err.issues,
         });
       }
 
@@ -486,7 +486,7 @@ export default async function operationalBatchRoutes(fastify: FastifyInstance) {
         return reply.code(422).send({
           error: 'VALIDATION_ERROR',
           message: 'Codigo de carga invalido',
-          issues: err.errors,
+          issues: err.issues,
         });
       }
 
@@ -547,7 +547,7 @@ export default async function operationalBatchRoutes(fastify: FastifyInstance) {
         return reply.code(422).send({
           error: 'VALIDATION_ERROR',
           message: 'Dados invalidos para criar carga operacional',
-          issues: err.errors,
+          issues: err.issues,
         });
       }
 
@@ -639,7 +639,7 @@ export default async function operationalBatchRoutes(fastify: FastifyInstance) {
         return reply.code(422).send({
           error: 'VALIDATION_ERROR',
           message: 'Dados invalidos para adicionar item a carga',
-          issues: err.errors,
+          issues: err.issues,
         });
       }
 

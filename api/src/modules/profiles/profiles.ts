@@ -1230,7 +1230,7 @@ export default async function profileRoutes(fastify: FastifyInstance) {
         return reply.code(422).send({
           error: 'VALIDATION_ERROR',
           message: 'Preferências de e-mail inválidas',
-          issues: err.errors,
+          issues: err.issues,
         });
       }
 
@@ -1498,7 +1498,7 @@ export default async function profileRoutes(fastify: FastifyInstance) {
         return reply.code(422).send({
           error: 'VALIDATION_ERROR',
           message: 'Dados inválidos para atualizar o perfil',
-          issues: err.errors,
+          issues: err.issues,
         });
       }
 

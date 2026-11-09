@@ -278,7 +278,14 @@ type CompletionEntry = {
   complete: boolean;
 };
 
-type CompletionPayload = Pick<
+// Keys whose value may be undefined stay optional, matching how callers build partial payloads.
+type UndefinedAsOptional<T> = {
+  [K in keyof T as undefined extends T[K] ? K : never]?: T[K];
+} & {
+  [K in keyof T as undefined extends T[K] ? never : K]: T[K];
+};
+
+type CompletionPayload = UndefinedAsOptional<Pick<
   ProfileWriteInput,
   | 'organizationName'
   | 'description'
@@ -298,7 +305,7 @@ type CompletionPayload = Pick<
   | 'acceptedCategories'
   | 'donationInterestCategories'
   | 'serviceRegions'
-> & {
+>> & {
   latitude?: number;
   longitude?: number;
 };

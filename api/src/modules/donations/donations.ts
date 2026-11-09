@@ -862,7 +862,7 @@ export default async function donationRoutes(fastify: FastifyInstance) {
 
       return reply.code(201).send(mapDonation(createdDonation, request.user));
     } catch (err) {
-      if (err instanceof z.ZodError) return reply.code(400).send({error:'VALIDATION_ERROR',message:err.errors[0]?.message ?? 'Confira os dados informados.',issues:err.errors});
+      if (err instanceof z.ZodError) return reply.code(400).send({error:'VALIDATION_ERROR',message:err.issues[0]?.message ?? 'Confira os dados informados.',issues:err.issues});
       if (err instanceof AppError) {
         return reply.code(err.statusCode).send(toErrorResponse(err));
       }
@@ -870,7 +870,7 @@ export default async function donationRoutes(fastify: FastifyInstance) {
         return reply.code(422).send({
           error: 'VALIDATION_ERROR',
           message: 'Dados inválidos para registrar o descarte',
-          issues: err.errors,
+          issues: err.issues,
         });
       }
       throw err;
@@ -897,7 +897,7 @@ export default async function donationRoutes(fastify: FastifyInstance) {
         },
       });
     } catch (err) {
-      if (err instanceof z.ZodError) return reply.code(400).send({error:'VALIDATION_ERROR',message:err.errors[0]?.message ?? 'Confira os dados informados.',issues:err.errors});
+      if (err instanceof z.ZodError) return reply.code(400).send({error:'VALIDATION_ERROR',message:err.issues[0]?.message ?? 'Confira os dados informados.',issues:err.issues});
       if (err instanceof AppError) {
         return reply.code(err.statusCode).send(toErrorResponse(err));
       }
@@ -905,7 +905,7 @@ export default async function donationRoutes(fastify: FastifyInstance) {
         return reply.code(422).send({
           error: 'VALIDATION_ERROR',
           message: 'Parâmetros inválidos',
-          issues: err.errors,
+          issues: err.issues,
         });
       }
       throw err;
@@ -956,7 +956,7 @@ export default async function donationRoutes(fastify: FastifyInstance) {
         },
       });
     } catch (err) {
-      if (err instanceof z.ZodError) return reply.code(400).send({error:'VALIDATION_ERROR',message:err.errors[0]?.message ?? 'Confira os dados informados.',issues:err.errors});
+      if (err instanceof z.ZodError) return reply.code(400).send({error:'VALIDATION_ERROR',message:err.issues[0]?.message ?? 'Confira os dados informados.',issues:err.issues});
       if (err instanceof AppError) {
         return reply.code(err.statusCode).send(toErrorResponse(err));
       }
@@ -964,7 +964,7 @@ export default async function donationRoutes(fastify: FastifyInstance) {
         return reply.code(422).send({
           error: 'VALIDATION_ERROR',
           message: 'Parâmetros inválidos para a fila operacional',
-          issues: err.errors,
+          issues: err.issues,
         });
       }
       throw err;
@@ -982,7 +982,7 @@ export default async function donationRoutes(fastify: FastifyInstance) {
 
       return reply.send(mapDonation(donation, request.user));
     } catch (err) {
-      if (err instanceof z.ZodError) return reply.code(400).send({error:'VALIDATION_ERROR',message:err.errors[0]?.message ?? 'Confira os dados informados.',issues:err.errors});
+      if (err instanceof z.ZodError) return reply.code(400).send({error:'VALIDATION_ERROR',message:err.issues[0]?.message ?? 'Confira os dados informados.',issues:err.issues});
       if (err instanceof AppError) {
         return reply.code(err.statusCode).send(toErrorResponse(err));
       }
@@ -1007,7 +1007,7 @@ export default async function donationRoutes(fastify: FastifyInstance) {
         data: donation.timeline.map(mapTimelineEvent),
       });
     } catch (err) {
-      if (err instanceof z.ZodError) return reply.code(400).send({error:'VALIDATION_ERROR',message:err.errors[0]?.message ?? 'Confira os dados informados.',issues:err.errors});
+      if (err instanceof z.ZodError) return reply.code(400).send({error:'VALIDATION_ERROR',message:err.issues[0]?.message ?? 'Confira os dados informados.',issues:err.issues});
       if (err instanceof AppError) {
         return reply.code(err.statusCode).send(toErrorResponse(err));
       }
@@ -1131,7 +1131,7 @@ export default async function donationRoutes(fastify: FastifyInstance) {
 
       return reply.send(mapDonation(updatedDonation, request.user));
     } catch (err) {
-      if (err instanceof z.ZodError) return reply.code(400).send({error:'VALIDATION_ERROR',message:err.errors[0]?.message ?? 'Confira os dados informados.',issues:err.errors});
+      if (err instanceof z.ZodError) return reply.code(400).send({error:'VALIDATION_ERROR',message:err.issues[0]?.message ?? 'Confira os dados informados.',issues:err.issues});
       if (err instanceof AppError) {
         return reply.code(err.statusCode).send(toErrorResponse(err));
       }
@@ -1139,7 +1139,7 @@ export default async function donationRoutes(fastify: FastifyInstance) {
         return reply.code(422).send({
           error: 'VALIDATION_ERROR',
           message: 'Dados inválidos para atualizar o status',
-          issues: err.errors,
+          issues: err.issues,
         });
       }
       throw err;

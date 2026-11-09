@@ -43,7 +43,7 @@ export default async function notificationRoutes(fastify: FastifyInstance) {
         return reply.code(422).send({
           error: 'VALIDATION_ERROR',
           message: 'Parametros invalidos para listar notificacoes',
-          issues: err.errors,
+          issues: err.issues,
         });
       }
 

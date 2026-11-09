@@ -67,7 +67,7 @@ export default async function addressRoutes(fastify: FastifyInstance) {
         return reply.code(422).send({
           error: 'VALIDATION_ERROR',
           message: 'Parametros invalidos para sugestoes de endereco',
-          issues: err.errors,
+          issues: err.issues,
         });
       }
 
@@ -102,7 +102,7 @@ export default async function addressRoutes(fastify: FastifyInstance) {
         return reply.code(422).send({
           error: 'VALIDATION_ERROR',
           message: 'Parametros invalidos para reverse geocoding',
-          issues: err.errors,
+          issues: err.issues,
         });
       }
 

@@ -477,7 +477,7 @@ export default async function collectionPointRoutes(fastify: FastifyInstance) {
         return reply.code(422).send({
           error: 'VALIDATION_ERROR',
           message: 'Parametros invalidos',
-          issues: err.errors,
+          issues: err.issues,
         });
       }
 

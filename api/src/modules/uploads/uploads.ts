@@ -162,7 +162,7 @@ export default async function uploadRoutes(fastify: FastifyInstance) {
           return reply.code(422).send({
             error: 'VALIDATION_ERROR',
             message: 'Dados invalidos para upload.',
-            issues: err.errors,
+            issues: err.issues,
           });
         }
 
@@ -195,7 +195,7 @@ export default async function uploadRoutes(fastify: FastifyInstance) {
         return reply.code(422).send({
           error: 'VALIDATION_ERROR',
           message: 'Arquivo solicitado invalido.',
-          issues: err.errors,
+          issues: err.issues,
         });
       }
 

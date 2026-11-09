@@ -93,7 +93,7 @@ function handleErrors(reply: FastifyReply, err: unknown) {
     return reply.code(422).send({
       error: 'VALIDATION_ERROR',
       message: 'Dados invalidos',
-      issues: err.errors,
+      issues: err.issues,
     });
   }
   if (
@@ -181,7 +181,7 @@ const changePasswordSchema = z.object({
 
 const accountDeletionRequestSchema = z.object({
   confirmationText: z.literal('ENCERRAR', {
-    errorMap: () => ({ message: 'Digite ENCERRAR para solicitar o encerramento.' }),
+    error: 'Digite ENCERRAR para solicitar o encerramento.',
   }),
 });
 

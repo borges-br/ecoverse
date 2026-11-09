@@ -151,7 +151,7 @@ export default async function seasonalCampaignRoutes(fastify: FastifyInstance) {
         return reply.code(422).send({
           error: 'VALIDATION_ERROR',
           message: 'Dados invalidos para campanha sazonal',
-          issues: err.errors,
+          issues: err.issues,
         });
       }
 
@@ -206,7 +206,7 @@ export default async function seasonalCampaignRoutes(fastify: FastifyInstance) {
         return reply.code(422).send({
           error: 'VALIDATION_ERROR',
           message: 'Dados invalidos para campanha sazonal',
-          issues: err.errors,
+          issues: err.issues,
         });
       }
 

@@ -64,7 +64,7 @@ export default async function operationalDonationRoutes(fastify: FastifyInstance
         return reply.code(422).send({
           error: 'VALIDATION_ERROR',
           message: 'Código de descarte inválido',
-          issues: err.errors,
+          issues: err.issues,
         });
       }
 

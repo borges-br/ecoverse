@@ -196,7 +196,7 @@ export default async function partnershipRoutes(fastify: FastifyInstance) {
         return reply.code(422).send({
           error: 'VALIDATION_ERROR',
           message: 'Parametros invalidos para parcerias operacionais',
-          issues: err.errors,
+          issues: err.issues,
         });
       }
 
@@ -348,7 +348,7 @@ export default async function partnershipRoutes(fastify: FastifyInstance) {
         return reply.code(422).send({
           error: 'VALIDATION_ERROR',
           message: 'Dados invalidos para solicitar parceria operacional',
-          issues: err.errors,
+          issues: err.issues,
         });
       }
 
@@ -488,7 +488,7 @@ export default async function partnershipRoutes(fastify: FastifyInstance) {
         return reply.code(422).send({
           error: 'VALIDATION_ERROR',
           message: 'Dados invalidos para responder a parceria operacional',
-          issues: err.errors,
+          issues: err.issues,
         });
       }
 

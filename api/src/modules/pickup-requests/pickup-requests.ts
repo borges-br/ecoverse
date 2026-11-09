@@ -218,7 +218,7 @@ export default async function pickupRequestRoutes(fastify: FastifyInstance) {
         return reply.code(422).send({
           error: 'VALIDATION_ERROR',
           message: 'Parametros invalidos para solicitacoes de retirada',
-          issues: err.errors,
+          issues: err.issues,
         });
       }
 
@@ -344,7 +344,7 @@ export default async function pickupRequestRoutes(fastify: FastifyInstance) {
         return reply.code(422).send({
           error: 'VALIDATION_ERROR',
           message: 'Dados invalidos para solicitar retirada',
-          issues: err.errors,
+          issues: err.issues,
         });
       }
 
@@ -446,7 +446,7 @@ export default async function pickupRequestRoutes(fastify: FastifyInstance) {
         return reply.code(422).send({
           error: 'VALIDATION_ERROR',
           message: 'Dados invalidos para responder a solicitacao de retirada',
-          issues: err.errors,
+          issues: err.issues,
         });
       }
 
