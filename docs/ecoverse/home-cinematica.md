@@ -50,7 +50,7 @@ Fontes alteradas ou criadas em `web/components/ecoverse/`:
 - `home-faq.tsx`: comportamento existente de dúvidas.
 - `public-chrome.tsx` e `public-chrome.module.css`: variante cinematográfica do cabeçalho.
 
-Assets em `web/public/ecoverse/hero/`: `landscape.mp4`, `portrait.mp4`, `poster.webp` e `poster-portrait.webp`. As origens em `hero/` foram preservadas. `.gitignore` também ignora as pastas temporárias de compilação desta revisão.
+Asset em `web/public/ecoverse/hero/`: `poster.webp` (imagem estática; o vídeo em loop foi removido). As origens em `hero/` foram preservadas. `.gitignore` também ignora as pastas temporárias de compilação desta revisão.
 
 ## Validação executada
 
