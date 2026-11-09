@@ -1,0 +1,112 @@
+{
+  "pdf": "EcoVerse_Documentacao_AC2.pdf",
+  "pages": 28,
+  "figures": 20,
+  "tables": 13,
+  "market": {
+    "TAM": 2053064,
+    "SAM": 964940,
+    "SOM": 19299
+  },
+  "team": [
+    [
+      "Nathan Borges",
+      "263944"
+    ],
+    [
+      "Vinícius Stadler Gorov",
+      "263317"
+    ],
+    [
+      "Antonio Carlos Damante de Souza",
+      "263304"
+    ],
+    [
+      "Guilherme Henrique de Assis Carvalho",
+      "264362"
+    ],
+    [
+      "Lincoln Mariozzi Proença Sobrinho do Prado",
+      "264303"
+    ],
+    [
+      "Matheus Lisbôa Paludeto",
+      "263392"
+    ]
+  ],
+  "links": [
+    {
+      "page": 5,
+      "url": "https://mosfet.com.br"
+    },
+    {
+      "page": 5,
+      "url": "https://trello.com/b/xqoCzfOG/ecoverse"
+    },
+    {
+      "page": 5,
+      "url": "https://github.com/borges-br/ecoverse"
+    },
+    {
+      "page": 26,
+      "url": "https://static.portaldaindustria.com.br/portaldaindustria/noticias/media/filer_public/c0/3a/c03a0890-d087-4a51-acc3-7c6a6bb6ae75/opiniao_publica_e_sustentabilidade.pdf"
+    },
+    {
+      "page": 26,
+      "url": "https://github.com/borges-br/ecoverse"
+    },
+    {
+      "page": 26,
+      "url": "https://trello.com/b/xqoCzfOG/ecoverse"
+    },
+    {
+      "page": 26,
+      "url": "https://greeneletron.org.br/perguntas-frequentes/"
+    },
+    {
+      "page": 26,
+      "url": "https://agenciadenoticias.ibge.gov.br/media/com_mediaibge/arquivos/8383bdedce5a6d972e60dd32671e533a.pdf"
+    },
+    {
+      "page": 26,
+      "url": "https://agenciadenoticias.ibge.gov.br/agencia-noticias/2012-agencia-de-noticias/noticias/47408-proporcao-de-usuarios-da-internet-no-pais-ultrapassou-90-da-populacao-de-10-anos-ou-mais-em-2025"
+    },
+    {
+      "page": 26,
+      "url": "https://www.itu.int/en/ITU-D/Environment/Pages/Publications/The-Global-E-waste-Monitor-2024.aspx"
+    },
+    {
+      "page": 26,
+      "url": "https://leanstack.com/lean-canvas"
+    },
+    {
+      "page": 26,
+      "url": "https://brasil.un.org/pt-br/sdgs/12"
+    },
+    {
+      "page": 26,
+      "url": "https://reciclus.org.br/onde-descartar/"
+    },
+    {
+      "page": 26,
+      "url": "https://meioambiente.sorocaba.sp.gov.br/educacaoambiental/lixo-eletronico/"
+    },
+    {
+      "page": 26,
+      "url": "https://www.sorocaba.sp.gov.br/governo-municipal/"
+    },
+    {
+      "page": 26,
+      "url": "https://portal156.sorocaba.sp.gov.br/portal156/carta-servico/assunto/C4F424F3-02B9-E411-9E1C-005056BF74CB/"
+    },
+    {
+      "page": 26,
+      "url": "https://www.strategyzer.com/library/the-value-proposition-canvas"
+    },
+    {
+      "page": 27,
+      "url": "https://trello.com/b/xqoCzfOG/ecoverse"
+    }
+  ],
+  "bytes": 2463081
+}
