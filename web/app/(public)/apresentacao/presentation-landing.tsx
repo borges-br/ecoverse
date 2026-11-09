@@ -3,7 +3,6 @@
 import {
   ArrowRight,
   Code2,
-  ExternalLink,
   Globe,
   Send,
   Smartphone,
@@ -11,19 +10,35 @@ import {
   HelpCircle,
   Users,
   X,
+  Youtube,
+  type LucideProps,
   type LucideIcon,
 } from 'lucide-react';
 import { AnimatePresence, motion, useReducedMotion, type Variants } from 'framer-motion';
 import { useRouter } from 'next/navigation';
-import { useEffect, useState, type MouseEvent, type ReactNode } from 'react';
+import { forwardRef, useEffect, useState, type MouseEvent, type ReactNode } from 'react';
 import { EcoVerseMark } from '@/components/branding/ecoverse-brand';
 import { cn } from '@/lib/utils';
 import { TeamSection } from '@/components/ui/team-section';
+
+const TrelloIcon = forwardRef<SVGSVGElement, LucideProps>(function TrelloIcon(
+  { size = 24, ...props },
+  ref,
+) {
+  return (
+    <svg ref={ref} width={size} height={size} viewBox="0 0 24 24" fill="currentColor" {...props}>
+      <rect x="4" y="3" width="7" height="13" rx="1.5" />
+      <rect x="13" y="3" width="7" height="9" rx="1.5" />
+    </svg>
+  );
+});
 
 // Edite estes links antes da feira se houver URLs finais de deploy e contatos.
 const LINKS = {
   app: '/login',
   github: 'https://github.com/borges-br',
+  trello: 'https://trello.com/b/xqoCZfQG/ecoverse',
+  youtube: 'https://www.youtube.com/watch?feature=shared&v=4AXuoFiWLYE',
   team: '#equipe',
   feedbackWebhook: 'https://n8n.borgesti.com/webhook/mosfet-unifacens',
 };
@@ -49,6 +64,18 @@ const quickLinks: Array<{
     description: 'Nathan Borges',
     href: LINKS.github,
     icon: Code2,
+  },
+  {
+    label: 'Trello',
+    description: 'Acompanhe o desenvolvimento',
+    href: LINKS.trello,
+    icon: TrelloIcon,
+  },
+  {
+    label: 'Vídeo',
+    description: 'Apresentação do projeto',
+    href: LINKS.youtube,
+    icon: Youtube,
   },
   {
     label: 'Dúvidas',
@@ -717,7 +744,14 @@ export function PresentationLanding() {
             </a>
             <a href={LINKS.github} className="inline-flex items-center gap-1 transition-colors hover:text-white">
               GitHub
-              <ExternalLink aria-hidden size={13} />
+            </a>
+            <a href={LINKS.trello} className="inline-flex items-center gap-1 transition-colors hover:text-white">
+              <TrelloIcon aria-hidden size={13} />
+              Trello
+            </a>
+            <a href={LINKS.youtube} className="inline-flex items-center gap-1 transition-colors hover:text-white">
+              <Youtube aria-hidden size={13} />
+              Vídeo
             </a>
           </div>
           <p className="text-sm text-white/45">© {new Date().getFullYear()} EcoVerse. Descartes rastreáveis com propósito.</p>
